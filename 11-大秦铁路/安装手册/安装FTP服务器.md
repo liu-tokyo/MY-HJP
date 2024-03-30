@@ -1,0 +1,146 @@
+# 安装FTP服务器
+
+大秦铁路的货检系统的服务器采用 Windows10 系统，所以直接利用 Windows 的 `FTP功能`。
+
+## 1. 安装FTP功能
+
+- 在 `应用和功能` 界面的右侧，点击 `程序和功能`，在显示出来的 `程序和功能` 画面的左侧，点击 `启用和关闭 Windows 功能`。  
+  ![image-20240330204404919](images/image-20240330204404919.png)
+
+- 找到 `Internet Information Services` 项目，展开后，选择 `FTP 服务器` 的相应功能  
+  ![image-20240330204610561](images/image-20240330204610561.png)  
+  点击 `确定` 按钮，保存设置后，系统会自动追加相应功能。  
+  ![image-20240330204833977](images/image-20240330204833977.png)  
+  安装结束之后，显示如下画面：  
+  ![image-20240330204921087](images/image-20240330204921087.png)  
+  点击 `关闭` 按钮，完成 FTP服务器 的功能追加。
+
+安装结束之后，需要重新启动电脑，或者是重启 `IIS服务`。
+
+## 2. 调整FTP站点
+
+### 2.1 添加FTP站点
+
+所在位置：`控制面板` → `系统和安全` → `管理工具` → `Internet Information Services (IIS)管理器`
+
+- 添加 FTP 站点  
+  ![image-20240330210424974](images/image-20240330210424974.png)  
+
+- 设置货检FTP的相关内容：  
+  ![image-20240330210622668](images/image-20240330210622668.png)  
+  站点名称：`HJAG_FTP`  
+  物理路径：`C:\inetpub\ftproot`
+
+- 绑定和SSL设置  
+  ![image-20240330211123728](images/image-20240330211123728.png)  
+  端口：`1021`
+  
+  SSL：`无SSL`
+
+- 身份验证和授权信息  
+  ![image-20240330211422440](images/image-20240330211422440.png)  
+  身份验证：`基本`  
+  允许访问：`所有用户`  
+  权限：`读取` + `写入`
+
+- 添加结束后，可以看到如下内容：  
+  ![image-20240330211819578](images/image-20240330211819578.png)
+
+### 2.2 添加虚拟目录
+
+- 在 `HJAG` 的站点上点击鼠标右键，选择 `添加虚拟目录`，显示如下画面：  
+  别名：`HJS_DATA`  
+  物理路径：`D:\HJS_DATA`
+  ![image-20240330214347537](images/image-20240330214347537.png)  
+  点击 `确定` 按钮，保存设置。
+
+## 3. 添加FTP用户
+
+### 3.1 普通FTP用户
+
+该用户在 货检客户端 使用，不具有 写入 权限。
+
+- 添加 `普通FTP用户`  
+  用户名：`FTP_USER`  
+  密码：`hj123456`  
+  ![image-20240330220058070](images/image-20240330220058070.png)  
+
+### 3.2 更新FTP用户
+
+该用户在 货检数据上传 模块使用，局有写权限。
+
+- 添加 `更新FTP用户`  
+  用户名：`FTP_UPLOAD`  
+  密码：`HJ202404`  
+  ![image-20240330220618285](images/image-20240330220618285.png)  
+
+- 修改权限  
+  因为添加的 `FTP_UPLOAD`  用户位普通的 `user` 用户，需要把 `HJS_DATA` 目录的权限进行调整：  
+  添加 `FTP_UPLOAD` 用户后，赋予该用户的 `修改` 权限  
+  ![image-20240330221053661](images/image-20240330221053661.png)    
+
+## 3. 调试FTP服务
+
+采用 Windows 自带的 FTP客户端 工具进行调试。
+
+因为端口没有采用默认的 21 端口号，所以需要在 命令提示符 内输入 ftp 指令后，用 `open localhost 1021` （注意：HOST和端口号之间用 半角空格 隔开）来连接 FTP服务。
+
+### 3.1 在服务器进行调试
+
+- 命令执行一览：  
+
+  ```cmd
+  C:\Users\liu>ftp
+  ftp> open localhost 1021
+  连接到 DESKTOP-SPBEP1T。
+  220 Microsoft FTP Service
+  200 OPTS UTF8 command successful - UTF8 encoding now ON.
+  用户(DESKTOP-SPBEP1T:(none)): FTP_USER
+  331 Password required
+  密码:
+  230 User logged in.
+  ftp> cd hjs_data
+  250 CWD command successful.
+  ftp> ls
+  200 EPRT command successful.
+  125 Data connection already open; Transfer starting.
+  HJS_DATA.ini
+  226 Transfer complete.
+  ftp: 收到 17 字节，用时 0.02秒 1.06千字节/秒。
+  ftp> dir
+  200 EPRT command successful.
+  125 Data connection already open; Transfer starting.
+  03-30-24  09:14PM                    0 HJS_DATA.ini
+  226 Transfer complete.
+  ftp: 收到 56 字节，用时 0.00秒 56000.00千字节/秒。
+  ftp> bye
+  221 Goodbye.
+  
+  ```
+
+- 如果把上面的命令中的 `localhost` 修改为 真实的 IP地址，会出现如下 防火墙 的画面，选在 `专用网络` 和 `共用网络` 两项，点击 `允许访问` 按钮进行确认。  
+  ![image-20240330221802050](images/image-20240330221802050.png)  
+
+如上设置之后，针对服务器本机，FTP服务 已经可以正常访问，但是从其它电脑尚无法进行访问。
+
+### 3.2 开启防火墙的FTP端口
+
+`控制面板` → `系统和安全` → `Windows Defender 防火墙`
+
+- 点击画面左侧的 `允许应用或功能通过 Windows Defender 防火墙` ，找到 `FTP 服务器` 项目：  
+  `专用` 和 `公用` 的2个项目都选择上  
+  ![image-20240330223331422](images/image-20240330223331422.png)  
+
+- 开放 FTP服务的端口  
+  `高级设置` → `入站规则` → `新建规则`   
+  开启端口（TCP）：`1021`  
+  名称：`货检FTP服务`  
+  ![image-20240330224347342](images/image-20240330224347342.png) 
+
+在开启了该端口之后，才能够从远处的电脑，对 货检FTP服务 进行访问。
+
+### 3.3 验证设置效果
+
+使用 `FTP_UPLOAD` 用户登录 FTP服务器，尝试用 `mkdir` `put` `get` 等指令，确认权限设置正常。
+
+## 4. 货检数据配置
