@@ -1,0 +1,176 @@
+
+
+
+
+
+
+- Npgsql
+- psqlODBC
+
+## 下载
+
+- 官方下载网址：
+
+  ```
+  https://www.postgresql.org/download/windows/
+  ```
+
+## 设置开发环境
+
+本次计划采用 `Visual Studio 6.0` 中的 VC++6.0 进行开发，因为 WindowsXP 上无法进行加密通讯（缺乏加密用的 `bcrypt.dll` 文件），所以需要在 Windows10 上安装 VS6 进行开发。
+
+### 安装
+
+安装过程中需要注意如下事项：
+
+- 安装的选项 `数据访问 和`企业工具` 与 Windows 10 存在兼容性问题，因此如果可以删除它们，则可以轻松安装到 SP6。
+- 需要安装 `Microsoft Visual c++ 2013 Redistributable x86` ，微软官方[下载](https://www.microsoft.com/ja-jp/download/details.aspx?id=40784)中文版，安装之后才可能编译之后正确启动，否则会显示缺乏 `MSCRT120.dll` 等错误。
+
+### 设置
+
+> 参照网站：http://blog.livedoor.jp/hayaokitaro/archives/52030326.html
+
+开发环境使用 `VC6.0`，所以只能采用能够支持32位Windows的最后版本 `10.23.1` 。是否能够用版本10的驱动，连接最新的64位数据库（当前16.2.1），需要测试之后决定。
+
+假设 `PostgreSQL` 安装路径为 `C:\Program Files (x86)\PostgreSQL\10` ，需要如下设置：
+
+- `Tools->options->Directiories` 的 `Show directories for:`
+
+  | 项目         | 路径               | 设置                                     |
+  | ------------ | ------------------ | ---------------------------------------- |
+  | 头文件路径   | `Include files`    | `C:\Program Files\PostgreSQL\10\include` |
+  | 库文件路径   | `Library files`    | `C:\ProgramFiles\PostgreSQL\10\lib`      |
+  | 连接文件路径 | `Executable files` | `C:\Program Files\PostgreSQL\10\bin`     |
+  | 源文件路径   | `Source files`     | -                                        |
+  
+- 添加链接库
+
+  `Project->setting->Link->Object/librarymodules` 中添加 `libpq.lib`，如果已经有内容的话，用半角空格隔开。
+  
+- 无法进行DEBUG
+
+  `Tools->options->DEBUG` 画面，去除 `OLE RPC debugging` 项目的标记。
+  
+- 兼容模式启动
+
+  将 `C:\Program Files (x86)\Microsoft Visual Studio\Common\MSDev98\Bin` 中的 `MSDEV.EXE` 的启动方式，设置为 `WindowsXP SP3` 的兼容模式。
+  
+  ※ 兼容模式的话，无法正确识别虚拟磁盘；修改为非兼容模式后，暂未发现问题。
+  
+- 数据库连接代码
+
+  ```C++
+  #include <libpq-fe.h>
+  //#pragma comment(lib, "libpq.lib")
+  int	testPSQL()
+  {
+  	char pConnString[256];
+  	sprintf(pConnString,"host=localhost port=54321 dbname=hjag user=postgres password=P@ssw0rd sslmode=prefer connect_timeout=10");
+     
+  	PGconn *conn;
+  	conn=PQconnectdb(pConnString);
+   
+  	if(PQstatus(conn)!=CONNECTION_OK)
+  	{
+  		//cout<<"connecterror!"<<endl;
+  		PQfinish(conn);
+  		return -1;
+  	}
+   
+  	PGresult *res;
+  	res=PQexec(conn,"select * fromtest");
+   
+  	if(PQresultStatus(res) == PGRES_TUPLES_OK&& PQntuples(res)>0)
+  	{
+  		//cout<<"c_id is :"<<PQgetvalue(res,0,0)<<endl;
+  		//cout<<"c_name is :"<<PQgetvalue(res,0,1)<<endl;
+  	}
+   
+  	PQclear(res);
+  	PQfinish(conn);
+   
+  	return 0;
+  }
+  ```
+
+### 结论
+
+安装如上步骤，正确安装及设置之后，即可在 Windows10 环境利用 VC++6.0 进行开发。
+
+**结果**：虽然有32位的驱动，但是是为了Windows7之后的32位系统准备的，WindowsXP不具备加密用的 `bcrypt.dll` ，所以虽然可以完成正常的编译，但是启动时候出现错误。而更老的版本（9.6.24及之前）不支持`Windows10`的安装，尝试在 Windows7 上安装之后把相关的头文件、库文件拷贝到 WindowsXP，依然无法启动。如果想要用 VC6 的话，估计 VS6 应该被安装到 Windows7 或 Windows10 上面才可以。
+
+## 数据库
+
+采用当前（2024年3月）的最新版本 16.2.1 作为数据库服务器，但是 客户端采用 `10.23`  版本 32位的连接驱动。
+
+### 安装
+
+### 设置
+
+- 默认只对本机开放，修改 `C:\Program Files\PostgreSQL\16\data\pg_hba.conf` ，修改之后需要重启数据库的相关服务。
+
+  找到如下内容：
+
+  ```
+  # TYPE  DATABASE        USER            ADDRESS                 METHOD
+  # IPv4 local connections:
+  host    all             all             127.0.0.1/32    md5
+  ```
+
+  上述内容后面追加如下行：
+
+  ```bash
+  ## 允许 IP 地址从 192.168.0.1 到 192.168.0.254 的主机（客户端）。
+  host all all 192.168.0.0/24 md5
+  ```
+
+  本人虚拟机的实际情况（需要根据实际网络情况，进行设置）：
+
+  ```
+  host all all 192.168.114.0/24 md5
+  ```
+
+- 对外开放数据库端口
+
+  打开防火墙，在 `入站规则` 增加 `PostgreSQL` 的端口号（默认5432，货检系统采用 54321）。
+
+### 创建数据表
+
+- test1
+
+  ```SQL
+  DROP TABLE IF EXISTS test1;
+  CREATE TABLE IF NOT EXISTS test1 (
+      id1 INTEGER NOT NULL,
+      id2 INTEGER NOT NULL,
+      name varchar(10) NOT NULL,
+      created TIMESTAMP,
+      modified TIMESTAMP,
+      PRIMARY KEY ( id1, id2 )
+  );
+  ```
+
+  数据表创建之后，查看数据表属性如下：
+
+  ```SQL
+  -- Table: public.test1
+  
+  -- DROP TABLE IF EXISTS public.test1;
+  
+  CREATE TABLE IF NOT EXISTS public.test1
+  (
+      id1 integer NOT NULL,
+      id2 integer NOT NULL,
+      name character varying(10) COLLATE pg_catalog."default" NOT NULL,
+      created timestamp without time zone,
+      modified timestamp without time zone,
+      CONSTRAINT test1_pkey PRIMARY KEY (id1, id2)
+  )
+  
+  TABLESPACE pg_default;
+  
+  ALTER TABLE IF EXISTS public.test1
+      OWNER to postgres;
+  ```
+
+  
