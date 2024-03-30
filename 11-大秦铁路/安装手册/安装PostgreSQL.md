@@ -76,3 +76,32 @@
 
 ## 3. 创建数据表
 
+## 4. 开放对外服务
+
+- 默认只对本机开放，修改 `C:\Program Files\PostgreSQL\16\data\pg_hba.conf` ，修改之后需要重启数据库的相关服务。
+
+  找到如下内容（`IPv4 local connections`）：
+
+  ```
+  # TYPE  DATABASE        USER            ADDRESS                 METHOD
+  # IPv4 local connections:
+  host    all             all             127.0.0.1/32            scram-sha-256
+  
+  ```
+
+  上述内容后面追加如下行：
+
+  ```bash
+  ## 允许 IP 地址从 192.168.0.1 到 192.168.0.254 的主机（客户端）。
+  host all all 192.168.0.0/24 scram-sha-256
+  ```
+
+  本人虚拟机的实际情况（需要根据实际网络情况，进行设置）：
+
+  ```
+  host all all 192.168.114.0/24 scram-sha-256
+  ```
+
+- 对外开放数据库端口
+
+  打开防火墙，在 `入站规则` 增加 `PostgreSQL` 的端口号（默认5432，货检系统采用 54321）。
