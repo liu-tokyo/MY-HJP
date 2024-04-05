@@ -88,16 +88,14 @@
 
 ### 3.1 MA_DEV_MST
 
-- MA_DEV_KEY
-
-  该数据表内没有数据，好像是没有用到。
+- 设备（股道）信息基础表
 
   ```sql
   DROP TABLE IF EXISTS MA_DEV_MST;
   CREATE TABLE IF NOT EXISTS MA_DEV_MST (
   	DEV_COD CHAR(10) NOT NULL,
   	DEV_NAM varchar(50) NOT NULL,
-      PRIMARY KEY ( DEV_COD )
+  	PRIMARY KEY ( DEV_COD )
   );
   
   ```
