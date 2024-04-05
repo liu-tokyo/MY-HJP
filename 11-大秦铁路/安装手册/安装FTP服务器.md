@@ -144,3 +144,36 @@
 使用 `FTP_UPLOAD` 用户登录 FTP服务器，尝试用 `mkdir` `put` `get` 等指令，确认权限设置正常。
 
 ## 4. 货检数据配置
+
+在 FTP服务 的数据目录下面，需要配置如下 2 个文件：
+
+- HJConfig.sys
+  客户端车站、股道等信息的配置文件
+
+  ```ini
+  [STA_NAM]
+  DSZ=大石庄
+  
+  [IN__OUT]
+  CZ=车站
+  
+  [ZZB_STK]
+  DSZ_CZ_XXX=大石庄-下行
+  DSZ_CZ_SXX=大石庄-上行
+  
+  ```
+
+- DBConfig.sys
+
+  数据库信息配置文件
+
+  ```ini
+  [SVR_CFG]
+  SVR_IPA=192.168.114.173
+  SVR_USR=postgres
+  SVR_PWD=HJ123456
+  SVR_PRT=15432
+  
+  ```
+
+  > 一般来说，数据库名称不应该出现在该配置文件中，登录用户名也不应该是默认的 `postgres`，可能会因为设置不当，而导致泄密，不过因为是内部网络，所以不需要过分担心。
