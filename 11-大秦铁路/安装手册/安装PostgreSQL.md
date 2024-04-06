@@ -94,86 +94,15 @@
 
 创建大秦铁路的接发车系统相关的数据表。
 
-### 3.1 MA_DEV_MST
-
-- 设备（股道）信息基础表
-
-  ```sql
-  DROP TABLE IF EXISTS MA_DEV_MST;
-  CREATE TABLE IF NOT EXISTS MA_DEV_MST (
-  	DEV_COD CHAR(10) NOT NULL,
-  	DEV_NAM varchar(50) NOT NULL,
-  	PRIMARY KEY ( DEV_COD )
-  );
-  
-  ```
-  
-- 字段说明：
-  
-  |  #   | 字段名称 | 说明     | 主键 | 字段类型               | 备注                         |
-  | :--: | -------- | -------- | ---- | ---------------------- | ---------------------------- |
-  |  1   | DEV_COD  | 设备编号 | ✅    | 固定长度字符串：10字节 | 例：DSZ_CZ_SXX 大石庄-上行线 |
-  |  2   | DEV_NAM  | 设备名称 |      | 可变字符串：50字节     |                              |
-  
-  更新用SQL（需要大秦铁路所有站进行统一编码）：
-  
-  ```sql
-  DELETE FROM MA_DEV_MST;
-  INSERT INTO MA_DEV_MST VALUES('DSZ_CZ_XXX', '大石庄-下行');
-  INSERT INTO MA_DEV_MST VALUES('DSZ_CZ_SXX', '大石庄-上行');
-  
-  ```
-
-### 3.2 MB_ODD_MST
-
-- 异常名称数据表
-
-  ```sql
-  DROP TABLE IF EXISTS MB_ODD_MST;
-  CREATE TABLE IF NOT EXISTS MB_ODD_MST (
-  	ODD_COD INTEGER NOT NULL,
-  	ODD_LVL INTEGER NOT NULL,
-  	ODD_NAM varchar(50) NOT NULL,
-  	PRIMARY KEY ( ODD_COD )
-  );
-  
-  ```
-  
-- 字段说明：
-  
-  |  #   | 字段名称 | 说明     | 主键 | 字段类型           | 备注 |
-  | :--: | -------- | -------- | ---- | ------------------ | ---- |
-  |  1   | ODD_COD  | 异常号码 | ✅    | 数字               |      |
-  |  2   | ODD_LVL  | 报警等级 |      | 数字               |      |
-  |  3   | ODD_NAM  | 异常名称 |      | 可变字符串：50字节 |      |
-  
-- 更新用SQL：
-  
-  ```sql
-  DELETE FROM MB_ODD_MST;
-  INSERT INTO MB_ODD_MST VALUES(1, 2, '车门开启');
-  INSERT INTO MB_ODD_MST VALUES(2, 2, '车窗开启');
-  INSERT INTO MB_ODD_MST VALUES(3, 2, '悬挂异物');
-  INSERT INTO MB_ODD_MST VALUES(4, 2, '货物撒漏');
-  INSERT INTO MB_ODD_MST VALUES(5, 2, '声音异常');
-  INSERT INTO MB_ODD_MST VALUES(6, 2, '篷布飘起');
-  INSERT INTO MB_ODD_MST VALUES(7, 2, '尾部软管未吊起');
-  INSERT INTO MB_ODD_MST VALUES(8, 2, '搭扣异常');
-  INSERT INTO MB_ODD_MST VALUES(9, 2, '闲杂人员扒乘');
-  
-  ```
-  
-  ※ 需要根据实际情况，修改该数据。
-
-### 3.4 MC_STA_MST
+### 3.4 MA_STA_MST
 
 本次系统部署的所用车站信息表。7 个车站、车务段一共 8 条记录。
 
 - 车站信息表
 
   ```sql
-  DROP TABLE IF EXISTS MC_STA_MST;
-  CREATE TABLE IF NOT EXISTS MC_STA_MST (
+  DROP TABLE IF EXISTS MA_STA_MST;
+  CREATE TABLE IF NOT EXISTS MA_STA_MST (
   	STA_COD CHAR(3) NOT NULL,
   	STA_IDX SMALLINT NOT NULL,
   	STA_NAM varchar(20) NOT NULL,
@@ -182,6 +111,11 @@
   	ftp_user varchar(20) NOT NULL,
   	ftp_password varchar(20) NOT NULL,
   	ftp_port INTEGER NOT NULL,
+  	dbs_host varchar(20) NOT NULL,
+  	dbs_name varchar(20) NOT NULL,
+  	dbs_user varchar(20) NOT NULL,
+  	dbs_password varchar(20) NOT NULL,
+  	dbs_port INTEGER NOT NULL,
   	PRIMARY KEY ( STA_COD )
   );
   
@@ -189,49 +123,52 @@
 
 - 字段说明：
   
-  |  #   | 字段名称     | 说明         | 主键 | 字段类型                      | 备注                                  |
-  | :--: | ------------ | ------------ | ---- | ----------------------------- | ------------------------------------- |
-  |  1   | STA_COD      | 车站编号     | ✅    | 固定长度字符串：3字节大写字母 | 例：DSZ 大石庄                        |
-  |  2   | STA_IDX      | 车站序号     |      | 数字                          | 下行通过的逐个车站的序号（车务段：0） |
-  |  3   | STA_NAM      | 车站名称     |      | 可变字符串：20字节            |                                       |
-  |  4   | ftp_host     | 服务器IP地址 |      | 可变字符串：20字节            |                                       |
-  |  5   | ftp_data     | 数据目录     |      | 可变字符串：20字节            | 默认：`hjs_data`                      |
-  |  6   | ftp_user     | 登录用户名   |      | 可变字符串：20字节            |                                       |
-  |  7   | ftp_password | 登录口令     |      | 可变字符串：20字节            |                                       |
-  |  8   | ftp_port     | 开放端口     |      | 数字                          | 货检默认：`15432`                     |
+  |  #   | 字段名称     | 说明               | 主键 | 字段类型                      | 备注                                  |
+  | :--: | ------------ | ------------------ | ---- | ----------------------------- | ------------------------------------- |
+  |  1   | STA_COD      | 车站编号           | ✅    | 固定长度字符串：3字节大写字母 | 例：DSZ 大石庄                        |
+  |  2   | STA_IDX      | 车站序号           |      | 数字                          | 下行通过的逐个车站的序号（车务段：0） |
+  |  3   | STA_NAM      | 车站名称           |      | 可变字符串：20字节            |                                       |
+  |  4   | ftp_host     | FTP服务器IP地址    |      | 可变字符串：20字节            |                                       |
+  |  5   | ftp_data     | FTP数据目录        |      | 可变字符串：20字节            | 默认：`hjs_data`                      |
+  |  6   | ftp_user     | FTP登录用户名      |      | 可变字符串：20字节            |                                       |
+  |  7   | ftp_password | FTP登录口令        |      | 可变字符串：20字节            |                                       |
+  |  8   | ftp_port     | FTP开放端口        |      | 数字                          | 货检默认：`1021`                      |
+  |  9   | dbs_host     | 数据库服务器IP地址 |      | 可变字符串：20字节            |                                       |
+  |  10  | dbs_name     | 数据库名称         |      | 可变字符串：20字节            | 默认：`HJAG`                          |
+  |  11  | dbs_user     | 数据库登录用户名   |      | 可变字符串：20字节            |                                       |
+  |  12  | dbs_password | 数据库登录口令     |      | 可变字符串：20字节            |                                       |
+  |  13  | dbs_port     | 数据库开放端口     |      | 数字                          | 货检默认：`15432`                     |
   
 - 更新SQL
 
   ```SQL
-  DELETE FROM MC_STA_MST;
-  INSERT INTO MC_STA_MST VALUES('CWU', 0,'车务段', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021);
-  INSERT INTO MC_STA_MST VALUES('AAA', 1,'车站#1', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021);
-  INSERT INTO MC_STA_MST VALUES('BBB', 2,'车站#2', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021);
-  INSERT INTO MC_STA_MST VALUES('CCC', 3,'车站#3', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021);
-  INSERT INTO MC_STA_MST VALUES('DSZ', 4,'大石庄', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021);
-  INSERT INTO MC_STA_MST VALUES('EEE', 5,'车站#5', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021);
-  INSERT INTO MC_STA_MST VALUES('FFF', 6,'车站#6', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021);
-  INSERT INTO MC_STA_MST VALUES('GGG', 7,'车站#7', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021);
+  DELETE FROM MA_STA_MST;
+  INSERT INTO MA_STA_MST VALUES('CWU', 0,'车务段', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021, '192.168.114.173', 'HJAG', 'postgres', 'HJ123456', 15432);
+  INSERT INTO MA_STA_MST VALUES('AAA', 1,'车站#1', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021, '192.168.114.173', 'HJAG', 'postgres', 'HJ123456', 15432);
+  INSERT INTO MA_STA_MST VALUES('BBB', 2,'车站#2', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021, '192.168.114.173', 'HJAG', 'postgres', 'HJ123456', 15432);
+  INSERT INTO MA_STA_MST VALUES('CCC', 3,'车站#3', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021, '192.168.114.173', 'HJAG', 'postgres', 'HJ123456', 15432);
+  INSERT INTO MA_STA_MST VALUES('DSZ', 4,'大石庄', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021, '192.168.114.173', 'HJAG', 'postgres', 'HJ123456', 15432);
+  INSERT INTO MA_STA_MST VALUES('EEE', 5,'车站#5', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021, '192.168.114.173', 'HJAG', 'postgres', 'HJ123456', 15432);
+  INSERT INTO MA_STA_MST VALUES('FFF', 6,'车站#6', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021, '192.168.114.173', 'HJAG', 'postgres', 'HJ123456', 15432);
+  INSERT INTO MA_STA_MST VALUES('GGG', 7,'车站#7', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021, '192.168.114.173', 'HJAG', 'postgres', 'HJ123456', 15432);
   
   ```
   
   ※ 大秦铁路一共有 7 个车站安装了 `接发车系统`，所以应该插入 7 条数据。查询时用如下SQL：
   
   ```SQL
-  SELECT * FROM MC_STA_MST ORDER BY STA_IDX;
+  SELECT * FROM MA_STA_MST ORDER BY STA_IDX;
   ```
-  
-  
 
-### 3.3 MD_STK_MST
+### 3.3 MB_STK_MST
 
 股道信息表，每个车站有上行、下行等 2 个股道，所以一共应该是 14 条记录。
 
 - 车站信息表（前后站）
 
   ```sql
-  DROP TABLE IF EXISTS MD_STK_MST;
-  CREATE TABLE IF NOT EXISTS MD_STK_MST (
+  DROP TABLE IF EXISTS MB_STK_MST;
+  CREATE TABLE IF NOT EXISTS MB_STK_MST (
   	STK_COD CHAR(10) NOT NULL,
       STK_IDX SMALLINT NOT NULL,
   	STK_NAM varchar(20) NOT NULL,
@@ -259,31 +196,76 @@
 - 更新SQL
 
   ```SQL
-  DELETE FROM MD_STK_MST;
-  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('AAA_CZ_XXX',  1, '车站#1-下行');
-  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('AAA_CZ_SXX',  2, '车站#1-上行');
-  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('BBB_CZ_XXX',  3, '车站#2-下行');
-  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('BBB_CZ_SXX',  4, '车站#2-上行');
-  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('CCC_CZ_XXX',  5, '车站#3-下行');
-  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('CCC_CZ_SXX',  6, '车站#3-上行');
-  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('DSZ_CZ_XXX',  7, '大石庄-下行');
-  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('DSZ_CZ_SXX',  8, '大石庄-上行');
-  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('EEE_CZ_XXX',  9, '车站#5-下行');
-  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('EEE_CZ_SXX', 10, '车站#5-上行');
-  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('FFF_CZ_XXX', 11, '车站#6-下行');
-  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('FFF_CZ_SXX', 12, '车站#6-上行');
-  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('GGG_CZ_XXX', 13, '车站#7-下行');
-  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('GGG_CZ_SXX', 14, '车站#7-上行');
+  DELETE FROM MB_STK_MST;
+  INSERT INTO MB_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('AAA_CZ_XXX',  1, '车站#1-下行');
+  INSERT INTO MB_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('AAA_CZ_SXX',  2, '车站#1-上行');
+  INSERT INTO MB_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('BBB_CZ_XXX',  3, '车站#2-下行');
+  INSERT INTO MB_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('BBB_CZ_SXX',  4, '车站#2-上行');
+  INSERT INTO MB_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('CCC_CZ_XXX',  5, '车站#3-下行');
+  INSERT INTO MB_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('CCC_CZ_SXX',  6, '车站#3-上行');
+  INSERT INTO MB_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('DSZ_CZ_XXX',  7, '大石庄-下行');
+  INSERT INTO MB_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('DSZ_CZ_SXX',  8, '大石庄-上行');
+  INSERT INTO MB_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('EEE_CZ_XXX',  9, '车站#5-下行');
+  INSERT INTO MB_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('EEE_CZ_SXX', 10, '车站#5-上行');
+  INSERT INTO MB_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('FFF_CZ_XXX', 11, '车站#6-下行');
+  INSERT INTO MB_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('FFF_CZ_SXX', 12, '车站#6-上行');
+  INSERT INTO MB_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('GGG_CZ_XXX', 13, '车站#7-下行');
+  INSERT INTO MB_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('GGG_CZ_SXX', 14, '车站#7-上行');
   
   ```
   
   ※ 该数据表只有 14 条记录。查询数据的时候，用如下SQL排序查询：
   
   ```SQL
-  SELECT * FROM MD_STK_MST ORDER BY STK_IDX;
+  SELECT * FROM MB_STK_MST ORDER BY STK_IDX;
+  ```
+
+### 3.2 MC_ODD_MST
+
+- 异常名称数据表
+
+  ```sql
+  DROP TABLE IF EXISTS MC_ODD_MST;
+  CREATE TABLE IF NOT EXISTS MC_ODD_MST (
+  	ODD_COD INTEGER NOT NULL,
+  	ODD_LVL INTEGER NOT NULL,
+  	ODD_NAM varchar(50) NOT NULL,
+  	PRIMARY KEY ( ODD_COD )
+  );
+  
   ```
   
+- 字段说明：
   
+  |  #   | 字段名称 | 说明     | 主键 | 字段类型           | 备注 |
+  | :--: | -------- | -------- | ---- | ------------------ | ---- |
+  |  1   | ODD_COD  | 异常号码 | ✅    | 数字               |      |
+  |  2   | ODD_LVL  | 报警等级 |      | 数字               |      |
+  |  3   | ODD_NAM  | 异常名称 |      | 可变字符串：50字节 |      |
+  
+- 更新用SQL：
+  
+  ```sql
+  DELETE FROM MC_ODD_MST;
+  INSERT INTO MC_ODD_MST VALUES(1, 2, '车门开启');
+  INSERT INTO MC_ODD_MST VALUES(2, 2, '车窗开启');
+  INSERT INTO MC_ODD_MST VALUES(3, 2, '悬挂异物');
+  INSERT INTO MC_ODD_MST VALUES(4, 2, '货物撒漏');
+  INSERT INTO MC_ODD_MST VALUES(5, 2, '声音异常');
+  INSERT INTO MC_ODD_MST VALUES(6, 2, '篷布飘起');
+  INSERT INTO MC_ODD_MST VALUES(7, 2, '尾部软管未吊起');
+  INSERT INTO MC_ODD_MST VALUES(8, 2, '搭扣异常');
+  INSERT INTO MC_ODD_MST VALUES(9, 2, '闲杂人员扒乘');
+  
+  ```
+  
+  ※ 需要根据实际情况，修改该数据。
+  
+- 查询用SQL
+
+  ```sql
+  SELECT * FROM MC_ODD_MST;
+  ```
 
 ## 4. 创建信息表
 
@@ -367,6 +349,12 @@
   |  25  | UPD_MAN     | 修改记录者（设备）                  |      | 可变长度字符串：最大16字节 |                                                    |
   |  26  | UPD_YMD     | 修改时刻                            |      | 固定长度字符串：23字节     |                                                    |
   |  27  | DEL_FLG     | 删除标志                            |      | 短整数                     | 0：未删除(*) 1：删除                               |
+  
+- 查询用SQL
+
+  ```SQL
+  SELECT * FROM TC_TRN_TBL ORDER BY TRN_YMD DESC, DEV_COD;
+  ```
 
 ### 4.3 TD_CAR_TBL
 
@@ -403,6 +391,12 @@
   |  8   | UPD_MAN  | 最终修改记录者（设备）              |      | 可变长度字符串：最大16字节 |                       |
   |  9   | UPD_YMD  | 最终修改时刻                        |      | 固定长度字符串：23字节     |                       |
   |  10  | DEL_FLG  | 处理状态                            |      | 数字                       | 0：未处理 1：处理结束 |
+  
+- 查询用SQL
+
+  ```SQL
+  SELECT * FROM TD_CAR_TBL ORDER BY TRN_YMD DESC, DEV_COD, CAR_IDX;
+  ```
 
 ### 4.4 TE_ODD_TBL
 
@@ -443,6 +437,12 @@
   |  10  | UPD_MAN  | 修改记录者（设备）                  |      | 可变长度字符串：最大16字节 |                             |
   |  11  | UPD_YMD  | 修改时刻                            |      | 固定长度字符串：23字节     |                             |
   |  12  | DEL_FLG  | 处理状态                            |      | 数字                       | 0：未处理 1：处理结束       |
+  
+- 查询用SQL
+
+  ```sql
+  SELECT * FROM TE_ODD_TBL ORDER BY TRN_YMD DESC, DEV_COD, CAR_IDX, LAC_IDX;
+  ```
 
 ## 4. 开放对外服务
 
