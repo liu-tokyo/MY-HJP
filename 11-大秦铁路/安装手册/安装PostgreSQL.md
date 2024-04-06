@@ -252,7 +252,17 @@
 
 ## 4. 创建信息表
 
-### 4.1 TC_TRN_TBL
+### 4.1 TA_USR_TBL
+
+取消 `口令登录` 方式，使用电脑的设备代码作为作业作业过程中的标记，因为有值班表和监控系统，能够很容易找到真实的操作者。  
+取消之后，可以简化一部分操作。相应的数据表也不需要创建。
+
+### 4.2 TB_DEV_TBL
+
+所有货检系统内的电脑的管理表，根本该表，可以查找到数据最终修改的设备，定位信息修改者。  
+初期版本，暂不考虑该表的创建。将来考虑把 EXCEL 格式的设备表格，用 CSV 的格式，直接导入数据表的方式。
+
+### 4.2 TC_TRN_TBL
 
 - 列车信息数据表
 
@@ -281,6 +291,10 @@
   	CAR_INI varchar(50),
   	STA_FLG SMALLINT DEFAULT 0,
   	TRN_MEM varchar(50),
+  	NEW_MAN varchar(16) NOT NULL,
+  	NEW_YMD CHAR(23) NOT NULL,
+  	UPD_MAN varchar(16) NOT NULL,
+  	UPD_YMD CHAR(23) NOT NULL,
   	DEL_FLG SMALLINT DEFAULT 0,
   	PRIMARY KEY ( TRN_YMD, DEV_COD )
   );
@@ -313,9 +327,13 @@
   |  20  | CAR_INI     | 配置文件名称                        |      | 可变长度字符串：最大50字节 |                                                    |
   |  21  | STA_FLG     | 本站、下站处理标志                  |      | 短整数                     | 0：本站处理(*) 1：下站处理                         |
   |  22  | TRN_MEM     | 备注                                |      | 可变长度字符串：最大50字节 |                                                    |
-  |  23  | DEL_FLG     | 删除标志                            |      | 短整数                     | 0：未删除(*) 1：删除                               |
+  |  23  | NEW_MAN     | 创建记录者（设备）                  |      | 可变长度字符串：最大16字节 |                                                    |
+  |  24  | NEW_YMD     | 创建时刻                            |      | 固定长度字符串：23字节     |                                                    |
+  |  25  | UPD_MAN     | 修改记录者（设备）                  |      | 可变长度字符串：最大16字节 |                                                    |
+  |  26  | UPD_YMD     | 修改时刻                            |      | 固定长度字符串：23字节     |                                                    |
+  |  27  | DEL_FLG     | 删除标志                            |      | 短整数                     | 0：未删除(*) 1：删除                               |
 
-### 4.2 TD_CAR_TBL
+### 4.3 TD_CAR_TBL
 
 - 车辆数据信息表
 
@@ -327,27 +345,31 @@
   	CAR_IDX INTEGER NOT NULL,
   	RFD_COD varchar(25),
   	CAR_COD varchar(7),
-  	ENG_FLG INTEGER,
-  	CHK_FLG INTEGER,
-  	DEL_FLG INTEGER,
+  	ENG_FLG SMALLINT DEFAULT 0,
+  	CHK_FLG SMALLINT DEFAULT 0,
+  	UPD_MAN varchar(16) NOT NULL,
+  	UPD_YMD CHAR(23) NOT NULL,
+  	DEL_FLG SMALLINT DEFAULT 0,
   	PRIMARY KEY ( TRN_YMD, DEV_COD, CAR_IDX )
   );
   ```
   
 - 字段说明：
   
-  |  #   | 字段名称 | 说明                                | 主键 | 字段类型               | 备注                  |
-  | :--: | -------- | ----------------------------------- | ---- | ---------------------- | --------------------- |
-  |  1   | TRN_YMD  | 列车通过开始时刻（YYYYMMDD-HHmmSS） | ✅    | 固定长度字符串：15字节 |                       |
-  |  2   | DEV_COD  | 设备编码                            | ✅    | 固定长度字符串：10字节 | 参照：MA_DEV_MST      |
-  |  3   | CAR_IDX  | 车辆编号                            |      | 整数                   |                       |
-  |  4   | RFD_COD  | 电子标签                            |      | 可变长度字符串：25字节 | 正常是20字节          |
-  |  5   | CAR_COD  | 车号                                |      | 可变长度字符串：7字节  | 机车4字节、货车7字节  |
-  |  6   | ENG_FLG  | 机车标志                            |      | 数字                   | 0：货车 1：机车       |
-  |  7   | CHK_FLG  | 已检标志                            |      | 整数                   | 0：未检 1：已检       |
-  |  8   | DEL_FLG  | 处理状态                            |      | 数字                   | 0：未处理 1：处理结束 |
+  |  #   | 字段名称 | 说明                                | 主键 | 字段类型                   | 备注                  |
+  | :--: | -------- | ----------------------------------- | ---- | -------------------------- | --------------------- |
+  |  1   | TRN_YMD  | 列车通过开始时刻（YYYYMMDD-HHmmSS） | ✅    | 固定长度字符串：15字节     |                       |
+  |  2   | DEV_COD  | 设备编码                            | ✅    | 固定长度字符串：10字节     | 参照：MA_DEV_MST      |
+  |  3   | CAR_IDX  | 车辆编号                            |      | 整数                       |                       |
+  |  4   | RFD_COD  | 电子标签                            |      | 可变长度字符串：25字节     | 正常是20字节          |
+  |  5   | CAR_COD  | 车号                                |      | 可变长度字符串：7字节      | 机车4字节、货车7字节  |
+  |  6   | ENG_FLG  | 机车标志                            |      | 数字                       | 0：货车 1：机车       |
+  |  7   | CHK_FLG  | 已检标志                            |      | 整数                       | 0：未检 1：已检       |
+  |  8   | UPD_MAN  | 最终修改记录者（设备）              |      | 可变长度字符串：最大16字节 |                       |
+  |  9   | UPD_YMD  | 最终修改时刻                        |      | 固定长度字符串：23字节     |                       |
+  |  10  | DEL_FLG  | 处理状态                            |      | 数字                       | 0：未处理 1：处理结束 |
 
-### 4.3 TE_ODD_TBL
+### 4.4 TE_ODD_TBL
 
 - 异常信息数据表
 
@@ -359,25 +381,33 @@
   	CAR_IDX INTEGER NOT NULL,
   	LAC_IDX INTEGER NOT NULL,
   	ODD_COD INTEGER NOT NULL,
-  	ODD_FLG INTEGER NOT NULL,
-  	ERR_FLG INTEGER,
-  	DEL_FLG INTEGER,
+  	ODD_FLG SMALLINT DEFAULT 0,
+  	ERR_FLG SMALLINT DEFAULT 0,
+  	NEW_MAN varchar(16) NOT NULL,
+  	NEW_YMD CHAR(23) NOT NULL,
+  	UPD_MAN varchar(16) NOT NULL,
+  	UPD_YMD CHAR(23) NOT NULL,
+  	DEL_FLG SMALLINT DEFAULT 0,
   	PRIMARY KEY ( TRN_YMD, DEV_COD, CAR_IDX, LAC_IDX )
   );
   ```
   
 - 字段说明：
   
-  |  #   | 字段名称 | 说明                                | 主键 | 字段类型               | 备注                      |
-  | :--: | -------- | ----------------------------------- | ---- | ---------------------- | ------------------------- |
-  |  1   | TRN_YMD  | 列车通过开始时刻（YYYYMMDD-HHmmSS） | ✅    | 固定长度字符串：15字节 |                           |
-  |  2   | DEV_COD  | 设备编码                            | ✅    | 固定长度字符串：10字节 | 参照：MA_DEV_MST          |
-  |  3   | CAR_IDX  | 车辆编号                            | ✅    | 数字                   |                           |
-  |  4   | LAC_IDX  | 线阵相机编号                        | ✅    | 数字                   |                           |
-  |  5   | ODD_COD  | 异常编号                            |      | 数字                   | 参照：MB_ODD_MST          |
-  |  6   | ODD_FLG  | 报告标志                            |      | 数字                   | 0：人工标定 1：AI智能识别 |
-  |  7   | ERR_FLG  | 误报标志                            |      | 数字                   | 0：未定 1：误报 2：非误报 |
-  |  8   | DEL_FLG  | 处理状态                            |      | 数字                   | 0：未处理 1：处理结束     |
+  |  #   | 字段名称 | 说明                                | 主键 | 字段类型                   | 备注                        |
+  | :--: | -------- | ----------------------------------- | ---- | -------------------------- | --------------------------- |
+  |  1   | TRN_YMD  | 列车通过开始时刻（YYYYMMDD-HHmmSS） | ✅    | 固定长度字符串：15字节     |                             |
+  |  2   | DEV_COD  | 设备编码                            | ✅    | 固定长度字符串：10字节     | 参照：MA_DEV_MST            |
+  |  3   | CAR_IDX  | 车辆编号                            | ✅    | 数字                       |                             |
+  |  4   | LAC_IDX  | 线阵相机编号                        | ✅    | 数字                       |                             |
+  |  5   | ODD_COD  | 异常编号                            |      | 数字                       | 参照：MB_ODD_MST            |
+  |  6   | ODD_FLG  | 报告标志                            |      | 数字                       | 0：人工标定 1：AI智能识别   |
+  |  7   | ERR_FLG  | 误报标志                            |      | 数字                       | 0：未定 1：误报 2：处理结束 |
+  |  8   | NEW_MAN  | 创建记录者（设备）                  |      | 可变长度字符串：最大16字节 |                             |
+  |  9   | NEW_YMD  | 创建时刻                            |      | 固定长度字符串：23字节     |                             |
+  |  10  | UPD_MAN  | 修改记录者（设备）                  |      | 可变长度字符串：最大16字节 |                             |
+  |  11  | UPD_YMD  | 修改时刻                            |      | 固定长度字符串：23字节     |                             |
+  |  12  | DEL_FLG  | 处理状态                            |      | 数字                       | 0：未处理 1：处理结束       |
 
 ## 4. 开放对外服务
 
