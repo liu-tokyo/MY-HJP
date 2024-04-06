@@ -162,61 +162,20 @@
   INSERT INTO MB_ODD_MST VALUES(9, 2, '闲杂人员扒乘');
   
   ```
+  
+  ※ 需要根据实际情况，修改该数据。
 
-### 3.3 MC_STA_MST
+### 3.4 MC_STA_MST
 
-车站用信息表，设置该车站的前站和后站。
+本次系统部署的所用车站信息表。7 个车站、车务段一共 8 条记录。
 
-- 车站信息表（前后站）
+- 车站信息表
 
   ```sql
   DROP TABLE IF EXISTS MC_STA_MST;
   CREATE TABLE IF NOT EXISTS MC_STA_MST (
-  	STA_IDX INTEGER NOT NULL,
-  	STA_NAM varchar(20) NOT NULL,
-  	ftp_host varchar(20) NOT NULL,
-  	ftp_data varchar(20) NOT NULL,
-  	ftp_user varchar(20) NOT NULL,
-  	ftp_password varchar(20) NOT NULL,
-  	ftp_port INTEGER NOT NULL,
-  	PRIMARY KEY ( STA_IDX )
-  );
-  
-  ```
-
-- 字段说明：
-  
-  |  #   | 字段名称     | 说明         | 主键 | 字段类型           | 备注             |
-  | :--: | ------------ | ------------ | ---- | ------------------ | ---------------- |
-  |  1   | STA_IDX      | 车站编号     | ✅    | 数字               | 1：前站 2：后站  |
-  |  2   | STA_NAM      | 车站名称     |      | 可变字符串：20字节 |                  |
-  |  3   | ftp_host     | 服务器IP地址 |      | 可变字符串：20字节 |                  |
-  |  4   | ftp_data     | 数据目录     |      | 可变字符串：20字节 | 默认：`hjs_data` |
-  |  5   | ftp_user     | 登录用户名   |      | 可变字符串：20字节 |                  |
-  |  6   | ftp_password | 登录口令     |      | 可变字符串：20字节 |                  |
-  |  7   | ftp_port     | 开放端口     |      | 数字               | 货检默认：`1021` |
-  
-- 更新SQL
-
-  ```SQL
-  DELETE FROM MC_STA_MST;
-  INSERT INTO MC_STA_MST VALUES(1, '前站名', '192.168.114.173', 'hjs_data_p', 'FTP_USER', 'hj123456', 1021);
-  INSERT INTO MC_STA_MST VALUES(2, '后站名', '192.168.114.173', 'hjs_data_n', 'FTP_USER', 'hj123456', 1021);
-  
-  ```
-
-  ※ 该数据表只有 2 条记录。
-
-### 3.4 MD_STA_MST
-
-车务段所用的车站信息表。
-
-- 车站信息表（车务段用）
-
-  ```sql
-  DROP TABLE IF EXISTS MD_STA_MST;
-  CREATE TABLE IF NOT EXISTS MD_STA_MST (
   	STA_COD CHAR(3) NOT NULL,
+  	STA_IDX SMALLINT NOT NULL,
   	STA_NAM varchar(20) NOT NULL,
   	ftp_host varchar(20) NOT NULL,
   	ftp_data varchar(20) NOT NULL,
@@ -230,25 +189,101 @@
 
 - 字段说明：
   
-  |  #   | 字段名称     | 说明         | 主键 | 字段类型              | 备注              |
-  | :--: | ------------ | ------------ | ---- | --------------------- | ----------------- |
-  |  1   | STA_COD      | 车站编号     | ✅    | 固定长度字符串：3字节 | 例：DSZ 大石庄    |
-  |  2   | STA_NAM      | 车站名称     |      | 可变字符串：20字节    |                   |
-  |  3   | ftp_host     | 服务器IP地址 |      | 可变字符串：20字节    |                   |
-  |  4   | ftp_data     | 数据目录     |      | 可变字符串：20字节    | 默认：`HJAG`      |
-  |  5   | ftp_user     | 登录用户名   |      | 可变字符串：20字节    |                   |
-  |  6   | ftp_password | 登录口令     |      | 可变字符串：20字节    |                   |
-  |  7   | ftp_port     | 开放端口     |      | 数字                  | 货检默认：`15432` |
+  |  #   | 字段名称     | 说明         | 主键 | 字段类型                      | 备注                                  |
+  | :--: | ------------ | ------------ | ---- | ----------------------------- | ------------------------------------- |
+  |  1   | STA_COD      | 车站编号     | ✅    | 固定长度字符串：3字节大写字母 | 例：DSZ 大石庄                        |
+  |  2   | STA_IDX      | 车站序号     |      | 数字                          | 下行通过的逐个车站的序号（车务段：0） |
+  |  3   | STA_NAM      | 车站名称     |      | 可变字符串：20字节            |                                       |
+  |  4   | ftp_host     | 服务器IP地址 |      | 可变字符串：20字节            |                                       |
+  |  5   | ftp_data     | 数据目录     |      | 可变字符串：20字节            | 默认：`hjs_data`                      |
+  |  6   | ftp_user     | 登录用户名   |      | 可变字符串：20字节            |                                       |
+  |  7   | ftp_password | 登录口令     |      | 可变字符串：20字节            |                                       |
+  |  8   | ftp_port     | 开放端口     |      | 数字                          | 货检默认：`15432`                     |
   
 - 更新SQL
 
   ```SQL
-  DELETE FROM MD_STA_MST;
-  INSERT INTO MD_STA_MST VALUES('DSZ', '前站名', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021);
+  DELETE FROM MC_STA_MST;
+  INSERT INTO MC_STA_MST VALUES('CWU', 0,'车务段', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021);
+  INSERT INTO MC_STA_MST VALUES('AAA', 1,'车站#1', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021);
+  INSERT INTO MC_STA_MST VALUES('BBB', 2,'车站#2', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021);
+  INSERT INTO MC_STA_MST VALUES('CCC', 3,'车站#3', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021);
+  INSERT INTO MC_STA_MST VALUES('DSZ', 4,'大石庄', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021);
+  INSERT INTO MC_STA_MST VALUES('EEE', 5,'车站#5', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021);
+  INSERT INTO MC_STA_MST VALUES('FFF', 6,'车站#6', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021);
+  INSERT INTO MC_STA_MST VALUES('GGG', 7,'车站#7', '192.168.114.173', 'hjs_data', 'FTP_USER', 'hj123456', 1021);
   
   ```
   
-  ※ 大秦铁路一共有 7 个车站安装了 `接发车系统`，所以应该插入 7 条数据。
+  ※ 大秦铁路一共有 7 个车站安装了 `接发车系统`，所以应该插入 7 条数据。查询时用如下SQL：
+  
+  ```SQL
+  SELECT * FROM MC_STA_MST ORDER BY STA_IDX;
+  ```
+  
+  
+
+### 3.3 MD_STK_MST
+
+股道信息表，每个车站有上行、下行等 2 个股道，所以一共应该是 14 条记录。
+
+- 车站信息表（前后站）
+
+  ```sql
+  DROP TABLE IF EXISTS MD_STK_MST;
+  CREATE TABLE IF NOT EXISTS MD_STK_MST (
+  	STK_COD CHAR(10) NOT NULL,
+      STK_IDX SMALLINT NOT NULL,
+  	STK_NAM varchar(20) NOT NULL,
+  	PSH_FLG SMALLINT DEFAULT 0,
+  	PSH_STA CHAR(3) DEFAULT '',
+  	UPD_MAN varchar(16) DEFAULT '',
+  	UPD_YMD CHAR(23) DEFAULT '',
+  	PRIMARY KEY ( STK_COD )
+  );
+  
+  ```
+
+- 字段说明：
+  
+  |  #   | 字段名称 | 说明                   | 主键 | 字段类型                       | 备注                            |
+  | :--: | -------- | ---------------------- | ---- | ------------------------------ | ------------------------------- |
+  |  1   | STK_COD  | 股道编号               | ✅    | 固定长度字符串：10字节大写字母 | 前3字节为车站编码               |
+  |  2   | STK_IDX  | 股道序号               |      | 短数字                         |                                 |
+  |  3   | STK_NAM  | 股道名称               |      | 可变字符串：20字节             |                                 |
+  |  4   | PSH_FLG  | 推送标志               |      | 短数字                         | 0：本站处理 1：推送其它车站     |
+  |  5   | PSH_STA  | 推送车站编码           |      | 固定长度字符串：3字节大写字母  | 参照：`MC_STA_MST` 的 `STA_COD` |
+  |  6   | UPD_MAN  | 最终修改记录者（设备） |      | 可变长度字符串：最大16字节     |                                 |
+  |  7   | UPD_YMD  | 最终修改时刻           |      | 固定长度字符串：23字节         |                                 |
+  
+- 更新SQL
+
+  ```SQL
+  DELETE FROM MD_STK_MST;
+  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('AAA_CZ_XXX',  1, '车站#1-下行');
+  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('AAA_CZ_SXX',  2, '车站#1-上行');
+  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('BBB_CZ_XXX',  3, '车站#2-下行');
+  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('BBB_CZ_SXX',  4, '车站#2-上行');
+  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('CCC_CZ_XXX',  5, '车站#3-下行');
+  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('CCC_CZ_SXX',  6, '车站#3-上行');
+  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('DSZ_CZ_XXX',  7, '大石庄-下行');
+  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('DSZ_CZ_SXX',  8, '大石庄-上行');
+  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('EEE_CZ_XXX',  9, '车站#5-下行');
+  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('EEE_CZ_SXX', 10, '车站#5-上行');
+  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('FFF_CZ_XXX', 11, '车站#6-下行');
+  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('FFF_CZ_SXX', 12, '车站#6-上行');
+  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('GGG_CZ_XXX', 13, '车站#7-下行');
+  INSERT INTO MD_STK_MST(STK_COD, STK_IDX, STK_NAM) VALUES('GGG_CZ_SXX', 14, '车站#7-上行');
+  
+  ```
+  
+  ※ 该数据表只有 14 条记录。查询数据的时候，用如下SQL排序查询：
+  
+  ```SQL
+  SELECT * FROM MD_STK_MST ORDER BY STK_IDX;
+  ```
+  
+  
 
 ## 4. 创建信息表
 
