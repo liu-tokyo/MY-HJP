@@ -183,15 +183,15 @@
 
 - 字段说明：
   
-  |  #   | 字段名称 | 说明                   | 主键 | 字段类型                       | 备注                            |
-  | :--: | -------- | ---------------------- | ---- | ------------------------------ | ------------------------------- |
-  |  1   | STK_COD  | 股道编号               | ✅    | 固定长度字符串：10字节大写字母 | 前3字节为车站编码               |
-  |  2   | STK_IDX  | 股道序号               |      | 短数字                         |                                 |
-  |  3   | STK_NAM  | 股道名称               |      | 可变字符串：20字节             |                                 |
-  |  4   | PSH_FLG  | 推送标志               |      | 短数字                         | 0：本站处理 1：推送其它车站     |
-  |  5   | PSH_STA  | 推送车站编码           |      | 固定长度字符串：3字节大写字母  | 参照：`MC_STA_MST` 的 `STA_COD` |
-  |  6   | UPD_MAN  | 最终修改记录者（设备） |      | 可变长度字符串：最大16字节     |                                 |
-  |  7   | UPD_YMD  | 最终修改时刻           |      | 固定长度字符串：23字节         |                                 |
+  |  #   | 字段名称 | 说明                   | 主键 | 字段类型                       | 备注                                     |
+  | :--: | -------- | ---------------------- | ---- | ------------------------------ | ---------------------------------------- |
+  |  1   | STK_COD  | 股道编号               | ✅    | 固定长度字符串：10字节大写字母 | 前3字节为车站编码（参照`更新SQL`的写法） |
+  |  2   | STK_IDX  | 股道序号               |      | 短数字                         |                                          |
+  |  3   | STK_NAM  | 股道名称               |      | 可变字符串：20字节             |                                          |
+  |  4   | PSH_FLG  | 推送标志               |      | 短数字                         | 0：本站处理 1：推送其它车站              |
+  |  5   | PSH_STA  | 推送车站编码           |      | 固定长度字符串：3字节大写字母  | 参照：`MC_STA_MST` 的 `STA_COD`          |
+  |  6   | UPD_MAN  | 最终修改记录者（设备） |      | 可变长度字符串：最大16字节     |                                          |
+  |  7   | UPD_YMD  | 最终修改时刻           |      | 固定长度字符串：23字节         |                                          |
   
 - 更新SQL
 
@@ -227,8 +227,8 @@
   ```sql
   DROP TABLE IF EXISTS MC_ODD_MST;
   CREATE TABLE IF NOT EXISTS MC_ODD_MST (
-  	ODD_COD INTEGER NOT NULL,
-  	ODD_LVL INTEGER NOT NULL,
+  	ODD_COD SMALLINT NOT NULL,
+  	ODD_LVL SMALLINT NOT NULL,
   	ODD_NAM varchar(50) NOT NULL,
   	PRIMARY KEY ( ODD_COD )
   );
@@ -291,22 +291,23 @@
   	TRN_COD varchar(5) NOT NULL,
   	PAS_TMS INTEGER,
   	CAR_SPD varchar(20),
-  	CAR_SP2 INTEGER,
-  	CAR_LEN INTEGER NOT NULL,
-  	CAR_ALL INTEGER NOT NULL,
-  	CAR_CNT INTEGER NOT NULL,
-  	ENG_CNT INTEGER NOT NULL,
-  	IOB_CAR_ALL INTEGER NOT NULL,
-  	IOB_ENG_CNT INTEGER NOT NULL,
-  	IOB_CAR_CNT INTEGER NOT NULL,
-  	STR_CAR_ALL INTEGER NOT NULL,
-  	STR_ENG_CNT INTEGER NOT NULL,
-  	STR_CAR_CNT INTEGER NOT NULL,
-  	NVR_CNT INTEGER NOT NULL,
-  	MP3_CNT INTEGER NOT NULL,
-  	HOT_CNT INTEGER NOT NULL,
+  	CAR_SP2 SMALLINT,
+  	CAR_LEN SMALLINT NOT NULL,
+  	CAR_ALL SMALLINT NOT NULL,
+  	CAR_CNT SMALLINT NOT NULL,
+  	ENG_CNT SMALLINT NOT NULL,
+  	IOB_CAR_ALL SMALLINT NOT NULL,
+  	IOB_ENG_CNT SMALLINT NOT NULL,
+  	IOB_CAR_CNT SMALLINT NOT NULL,
+  	STR_CAR_ALL SMALLINT NOT NULL,
+  	STR_ENG_CNT SMALLINT NOT NULL,
+  	STR_CAR_CNT SMALLINT NOT NULL,
+  	NVR_CNT SMALLINT NOT NULL,
+  	MP3_CNT SMALLINT NOT NULL,
+  	HOT_CNT SMALLINT NOT NULL,
   	CAR_INI varchar(50),
   	STA_FLG SMALLINT DEFAULT 0,
+  	TWO_FLG SMALLINT DEFAULT 0,
   	TRN_MEM varchar(50),
   	NEW_MAN varchar(16) NOT NULL,
   	NEW_YMD CHAR(23) NOT NULL,
@@ -343,12 +344,13 @@
   |  19  | HOT_CNT     | 轴温数据文件数量                    |      | 整数                       |                                                    |
   |  20  | CAR_INI     | 配置文件名称                        |      | 可变长度字符串：最大50字节 |                                                    |
   |  21  | STA_FLG     | 本站、下站处理标志                  |      | 短整数                     | 0：本站处理(*) 1：下站处理                         |
-  |  22  | TRN_MEM     | 备注                                |      | 可变长度字符串：最大50字节 |                                                    |
-  |  23  | NEW_MAN     | 创建记录者（设备）                  |      | 可变长度字符串：最大16字节 |                                                    |
-  |  24  | NEW_YMD     | 创建时刻                            |      | 固定长度字符串：23字节     |                                                    |
-  |  25  | UPD_MAN     | 修改记录者（设备）                  |      | 可变长度字符串：最大16字节 |                                                    |
-  |  26  | UPD_YMD     | 修改时刻                            |      | 固定长度字符串：23字节     |                                                    |
-  |  27  | DEL_FLG     | 删除标志                            |      | 短整数                     | 0：未删除(*) 1：删除                               |
+  |  22  | TWO_FLG     | 同时过车标志                        |      | 短整数                     | 0：正常过车 1：同时过车                            |
+  |  23  | TRN_MEM     | 备注                                |      | 可变长度字符串：最大50字节 |                                                    |
+  |  24  | NEW_MAN     | 创建记录者（设备）                  |      | 可变长度字符串：最大16字节 |                                                    |
+  |  25  | NEW_YMD     | 创建时刻                            |      | 固定长度字符串：23字节     |                                                    |
+  |  26  | UPD_MAN     | 修改记录者（设备）                  |      | 可变长度字符串：最大16字节 |                                                    |
+  |  27  | UPD_YMD     | 修改时刻                            |      | 固定长度字符串：23字节     |                                                    |
+  |  28  | DEL_FLG     | 删除标志                            |      | 短整数                     | 0：未删除(*) 1：删除                               |
   
 - 查询用SQL
 
@@ -365,16 +367,18 @@
   CREATE TABLE IF NOT EXISTS TD_CAR_TBL (
   	TRN_YMD CHAR(15) NOT NULL,
   	DEV_COD CHAR(10) NOT NULL,
-  	CAR_IDX INTEGER NOT NULL,
+  	CAR_IDX SMALLINT NOT NULL,
   	RFD_COD varchar(25),
   	CAR_COD varchar(7),
   	ENG_FLG SMALLINT DEFAULT 0,
   	CHK_FLG SMALLINT DEFAULT 0,
+  	CHK_FAI SMALLINT DEFAULT 0,
   	UPD_MAN varchar(16) NOT NULL,
   	UPD_YMD CHAR(23) NOT NULL,
   	DEL_FLG SMALLINT DEFAULT 0,
   	PRIMARY KEY ( TRN_YMD, DEV_COD, CAR_IDX )
   );
+  
   ```
   
 - 字段说明：
@@ -387,10 +391,11 @@
   |  4   | RFD_COD  | 电子标签                            |      | 可变长度字符串：25字节     | 正常是20字节          |
   |  5   | CAR_COD  | 车号                                |      | 可变长度字符串：7字节      | 机车4字节、货车7字节  |
   |  6   | ENG_FLG  | 机车标志                            |      | 数字                       | 0：货车 1：机车       |
-  |  7   | CHK_FLG  | 已检标志                            |      | 整数                       | 0：未检 1：已检       |
-  |  8   | UPD_MAN  | 最终修改记录者（设备）              |      | 可变长度字符串：最大16字节 |                       |
-  |  9   | UPD_YMD  | 最终修改时刻                        |      | 固定长度字符串：23字节     |                       |
-  |  10  | DEL_FLG  | 处理状态                            |      | 数字                       | 0：未处理 1：处理结束 |
+  |  7   | CHK_FLG  | 人工已检标志                        |      | 整数                       | 0：未检 1：已检       |
+  |  8   | CHK_FAI  | 智能已检标志（AI）                  |      | 整数                       | 0：未检 1：已检       |
+  |  9   | UPD_MAN  | 最终修改记录者（设备）              |      | 可变长度字符串：最大16字节 |                       |
+  |  10  | UPD_YMD  | 最终修改时刻                        |      | 固定长度字符串：23字节     |                       |
+  |  11  | DEL_FLG  | 处理状态                            |      | 数字                       | 0：未处理 1：处理结束 |
   
 - 查询用SQL
 
@@ -407,9 +412,10 @@
   CREATE TABLE IF NOT EXISTS TE_ODD_TBL (
   	TRN_YMD CHAR(15) NOT NULL,
   	DEV_COD CHAR(10) NOT NULL,
-  	CAR_IDX INTEGER NOT NULL,
-  	LAC_IDX INTEGER NOT NULL,
-  	ODD_COD INTEGER NOT NULL,
+  	CAR_IDX SMALLINT NOT NULL,
+  	LAC_IDX SMALLINT NOT NULL,
+  	ODD_COD SMALLINT NOT NULL,
+  	ODD_LVL SMALLINT NOT NULL,
   	ODD_FLG SMALLINT DEFAULT 0,
   	ERR_FLG SMALLINT DEFAULT 0,
   	NEW_MAN varchar(16) NOT NULL,
@@ -430,13 +436,14 @@
   |  3   | CAR_IDX  | 车辆编号                            | ✅    | 数字                       |                             |
   |  4   | LAC_IDX  | 线阵相机编号                        | ✅    | 数字                       |                             |
   |  5   | ODD_COD  | 异常编号                            |      | 数字                       | 参照：MB_ODD_MST            |
-  |  6   | ODD_FLG  | 报告标志                            |      | 数字                       | 0：人工标定 1：AI智能识别   |
-  |  7   | ERR_FLG  | 误报标志                            |      | 数字                       | 0：未定 1：误报 2：处理结束 |
-  |  8   | NEW_MAN  | 创建记录者（设备）                  |      | 可变长度字符串：最大16字节 |                             |
-  |  9   | NEW_YMD  | 创建时刻                            |      | 固定长度字符串：23字节     |                             |
-  |  10  | UPD_MAN  | 修改记录者（设备）                  |      | 可变长度字符串：最大16字节 |                             |
-  |  11  | UPD_YMD  | 修改时刻                            |      | 固定长度字符串：23字节     |                             |
-  |  12  | DEL_FLG  | 处理状态                            |      | 数字                       | 0：未处理 1：处理结束       |
+  |  6   | ODD_LVL  | 报警级别                            |      | 数字                       | 参照：MB_ODD_MST            |
+  |  7   | ODD_FLG  | 报告标志                            |      | 数字                       | 0：人工标定 1：AI智能识别   |
+  |  8   | ERR_FLG  | 误报标志                            |      | 数字                       | 0：未定 1：误报 2：处理结束 |
+  |  9   | NEW_MAN  | 创建记录者（设备）                  |      | 可变长度字符串：最大16字节 |                             |
+  |  10  | NEW_YMD  | 创建时刻                            |      | 固定长度字符串：23字节     |                             |
+  |  11  | UPD_MAN  | 修改记录者（设备）                  |      | 可变长度字符串：最大16字节 |                             |
+  |  12  | UPD_YMD  | 修改时刻                            |      | 固定长度字符串：23字节     |                             |
+  |  13  | DEL_FLG  | 处理状态                            |      | 数字                       | 0：未处理 1：处理结束       |
   
 - 查询用SQL
 
