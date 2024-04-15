@@ -14,3 +14,8 @@
 |  6   | 截取的音频播放：<br />在列车数据浏览界面，车次信息中，选中该列车，右键菜单中（高清图像浏览、视频浏览、音频播放），选中音频播放，弹出界面，播放过车音频数据； | ✅    |      |
 |  7   | 大秦车务段（中央值守）：<br />统计功能（7个站共计过车数量，异常车辆数量，误报的数量等） |      |      |
 
+
+
+## 海康NVR录制视频播放
+
+> https://www.hikvision.com/cn/support/Downloads/Desktop-Application/Hikvision-Player/
