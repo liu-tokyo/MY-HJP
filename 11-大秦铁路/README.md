@@ -19,3 +19,7 @@
 ## 海康NVR录制视频播放
 
 > https://www.hikvision.com/cn/support/Downloads/Desktop-Application/Hikvision-Player/
+
+## AI智能识别SDK
+
+> https://docs.neurobot.co/zh-cn/latest/ModelDeployment/SDK/
