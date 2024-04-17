@@ -23,3 +23,7 @@
 ## AI智能识别SDK
 
 > https://docs.neurobot.co/zh-cn/latest/ModelDeployment/SDK/
+
+## 搭建流媒体服务器
+
+> https://zhuanlan.zhihu.com/p/622506864
