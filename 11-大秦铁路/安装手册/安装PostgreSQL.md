@@ -371,8 +371,8 @@
   	RFD_COD varchar(25),
   	CAR_COD varchar(7),
   	ENG_FLG SMALLINT DEFAULT 0,
-  	CHK_FLG SMALLINT DEFAULT 0,
-  	CHK_FAI SMALLINT DEFAULT 0,
+  	CHK_MAN SMALLINT DEFAULT 0,
+  	CHK_AIR SMALLINT DEFAULT 0,
   	UPD_MAN varchar(16) NOT NULL,
   	UPD_YMD CHAR(23) NOT NULL,
   	DEL_FLG SMALLINT DEFAULT 0,
@@ -383,19 +383,19 @@
   
 - 字段说明：
   
-  |  #   | 字段名称 | 说明                                | 主键 | 字段类型                   | 备注                  |
-  | :--: | -------- | ----------------------------------- | ---- | -------------------------- | --------------------- |
-  |  1   | TRN_YMD  | 列车通过开始时刻（YYYYMMDD-HHmmSS） | ✅    | 固定长度字符串：15字节     |                       |
-  |  2   | DEV_COD  | 设备编码                            | ✅    | 固定长度字符串：10字节     | 参照：MA_DEV_MST      |
-  |  3   | CAR_IDX  | 车辆编号                            |      | 整数                       |                       |
-  |  4   | RFD_COD  | 电子标签                            |      | 可变长度字符串：25字节     | 正常是20字节          |
-  |  5   | CAR_COD  | 车号                                |      | 可变长度字符串：7字节      | 机车4字节、货车7字节  |
-  |  6   | ENG_FLG  | 机车标志                            |      | 数字                       | 0：货车 1：机车       |
-  |  7   | CHK_FLG  | 人工已检标志                        |      | 整数                       | 0：未检 1：已检       |
-  |  8   | CHK_FAI  | 智能已检标志（AI）                  |      | 整数                       | 0：未检 1：已检       |
-  |  9   | UPD_MAN  | 最终修改记录者（设备）              |      | 可变长度字符串：最大16字节 |                       |
-  |  10  | UPD_YMD  | 最终修改时刻                        |      | 固定长度字符串：23字节     |                       |
-  |  11  | DEL_FLG  | 处理状态                            |      | 数字                       | 0：未处理 1：处理结束 |
+  |  #   | 字段名称 | 说明                                | 主键 | 字段类型                   | 备注                        |
+  | :--: | -------- | ----------------------------------- | ---- | -------------------------- | --------------------------- |
+  |  1   | TRN_YMD  | 列车通过开始时刻（YYYYMMDD-HHmmSS） | ✅    | 固定长度字符串：15字节     |                             |
+  |  2   | DEV_COD  | 设备编码                            | ✅    | 固定长度字符串：10字节     | 参照：MA_DEV_MST            |
+  |  3   | CAR_IDX  | 车辆编号                            |      | 整数                       |                             |
+  |  4   | RFD_COD  | 电子标签                            |      | 可变长度字符串：25字节     | 正常是20字节                |
+  |  5   | CAR_COD  | 车号                                |      | 可变长度字符串：7字节      | 机车4字节、货车7字节        |
+  |  6   | ENG_FLG  | 机车标志                            |      | 数字                       | 0：货车 1：机车             |
+  |  7   | CHK_MAN  | 人工已检标志                        |      | 整数                       | 0：未检 1：已检             |
+  |  8   | CHK_AIR  | 智能已检标志（AI）                  |      | 整数                       | 0：未检 4：已检（相机数量） |
+  |  9   | UPD_MAN  | 最终修改记录者（设备）              |      | 可变长度字符串：最大16字节 |                             |
+  |  10  | UPD_YMD  | 最终修改时刻                        |      | 固定长度字符串：23字节     |                             |
+  |  11  | DEL_FLG  | 处理状态                            |      | 数字                       | 0：未处理 1：处理结束       |
   
 - 查询用SQL
 
@@ -414,9 +414,10 @@
   	DEV_COD CHAR(10) NOT NULL,
   	CAR_IDX SMALLINT NOT NULL,
   	LAC_IDX SMALLINT NOT NULL,
+  	ODD_IDX SMALLINT NOT NULL,
   	ODD_COD SMALLINT NOT NULL,
   	ODD_NAM varchar(50) NOT NULL,
-  	C_SCORE INT NOT NULL,
+  	C_SCORE varchar(10) NOT NULL,
   	POS_X_0 SMALLINT NOT NULL,
   	POS_Y_0 SMALLINT NOT NULL,
   	POS_X_1 SMALLINT NOT NULL,
@@ -432,7 +433,7 @@
   	UPD_MAN varchar(16) NOT NULL,
   	UPD_YMD CHAR(23) NOT NULL,
   	DEL_FLG SMALLINT DEFAULT 0,
-  	PRIMARY KEY ( TRN_YMD, DEV_COD, CAR_IDX, LAC_IDX, ODD_COD )
+  	PRIMARY KEY ( TRN_YMD, DEV_COD, CAR_IDX, LAC_IDX, ODD_IDX )
   );
   ```
   
@@ -444,24 +445,25 @@
   |  2   | DEV_COD  | 设备编码                            | ✅    | 固定长度字符串：10字节     | 参照：MA_DEV_MST              |
   |  3   | CAR_IDX  | 车辆编号                            | ✅    | 短数字                     |                               |
   |  4   | LAC_IDX  | 线阵相机编号                        | ✅    | 短数字                     |                               |
-  |  5   | ODD_COD  | 异常编号                            |      | 短数字                     | 参照：MB_ODD_MST              |
-  |  6   | ODD_NAM  | 异常名称                            |      | 可变长度字符串：最大50字节 |                               |
-  |  7   | C_SCORE  | 相似度                              |      | 数字                       | 乘以1000000（百万）后的数字   |
-  |  8   | POS_X_0  | 位置坐标-x0                         |      | 短数字                     |                               |
-  |  9   | POS_Y_0  | 位置坐标-y0                         |      | 短数字                     |                               |
-  |  10  | POS_X_1  | 位置坐标-x1                         |      | 短数字                     |                               |
-  |  11  | POS_Y_1  | 位置坐标-y2                         |      | 短数字                     |                               |
-  |  12  | ROW_IDX  | 行编号                              |      | 短数字                     | 暂无用途                      |
-  |  13  | COL_IDX  | 列标号                              |      | 短数字                     | 暂无用途                      |
-  |  14  | MSK_WID  | 隐蔽宽度                            |      | 短数字                     | 暂无用途                      |
-  |  15  | MSK_HEI  | 隐蔽高度                            |      | 短数字                     | 暂无用途                      |
-  |  16  | ODD_FLG  | 报告标志                            |      | 数字                       | 0：人工标定 1：AI智能识别     |
-  |  17  | RSV_FLG  | 解决标志                            |      | 数字                       | 0：未处理 1：误报 2：处理结束 |
-  |  18  | NEW_MAN  | 创建记录者（设备）                  |      | 可变长度字符串：最大16字节 |                               |
-  |  19  | NEW_YMD  | 创建时刻                            |      | 固定长度字符串：23字节     |                               |
-  |  20  | UPD_MAN  | 修改记录者（设备）                  |      | 可变长度字符串：最大16字节 |                               |
-  |  21  | UPD_YMD  | 修改时刻                            |      | 固定长度字符串：23字节     |                               |
-  |  22  | DEL_FLG  | 处理状态                            |      | 数字                       | 0：未处理 1：处理结束         |
+  |  5   | ODD_IDX  | 异常序号                            | ✅    | 短数字                     |                               |
+  |  6   | ODD_COD  | 异常编号                            |      | 短数字                     | 参照：MB_ODD_MST              |
+  |  7   | ODD_NAM  | 异常名称                            |      | 可变长度字符串：最大50字节 |                               |
+  |  8   | C_SCORE  | 相似度                              |      | 可变长度字符串：最大10字节 |                               |
+  |  9   | POS_X_0  | 位置坐标-x0                         |      | 短数字                     |                               |
+  |  10  | POS_Y_0  | 位置坐标-y0                         |      | 短数字                     |                               |
+  |  11  | POS_X_1  | 位置坐标-x1                         |      | 短数字                     |                               |
+  |  12  | POS_Y_1  | 位置坐标-y2                         |      | 短数字                     |                               |
+  |  13  | ROW_IDX  | 行编号                              |      | 短数字                     | 暂无用途                      |
+  |  14  | COL_IDX  | 列标号                              |      | 短数字                     | 暂无用途                      |
+  |  15  | MSK_WID  | 隐蔽宽度                            |      | 短数字                     | 暂无用途                      |
+  |  16  | MSK_HEI  | 隐蔽高度                            |      | 短数字                     | 暂无用途                      |
+  |  17  | ODD_FLG  | 报告标志                            |      | 数字                       | 0：人工标定 1：AI智能识别     |
+  |  18  | RSV_FLG  | 解决标志                            |      | 数字                       | 0：未处理 1：误报 2：处理结束 |
+  |  19  | NEW_MAN  | 创建记录者（设备）                  |      | 可变长度字符串：最大16字节 |                               |
+  |  20  | NEW_YMD  | 创建时刻                            |      | 固定长度字符串：23字节     |                               |
+  |  21  | UPD_MAN  | 修改记录者（设备）                  |      | 可变长度字符串：最大16字节 |                               |
+  |  22  | UPD_YMD  | 修改时刻                            |      | 固定长度字符串：23字节     |                               |
+  |  23  | DEL_FLG  | 处理状态                            |      | 数字                       | 0：未处理 1：处理结束         |
   
 - 查询用SQL
 
