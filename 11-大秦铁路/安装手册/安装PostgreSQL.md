@@ -279,7 +279,7 @@
 所有货检系统内的电脑的管理表，根本该表，可以查找到数据最终修改的设备，定位信息修改者。  
 初期版本，暂不考虑该表的创建。将来考虑把 EXCEL 格式的设备表格，用 CSV 的格式，直接导入数据表的方式。
 
-### 4.2 TC_TRN_TBL
+### 4.3 TC_TRN_TBL
 
 - 列车信息数据表
 
@@ -358,7 +358,7 @@
   SELECT * FROM TC_TRN_TBL ORDER BY TRN_YMD DESC, DEV_COD;
   ```
 
-### 4.3 TD_CAR_TBL
+### 4.4 TD_CAR_TBL
 
 - 车辆数据信息表
 
@@ -403,9 +403,9 @@
   SELECT * FROM TD_CAR_TBL ORDER BY TRN_YMD DESC, DEV_COD, CAR_IDX;
   ```
 
-### 4.4 TE_ODD_TBL
+### 4.5 TE_ODD_TBL
 
-- 异常信息数据表
+- 异常信息数据表（本站数据）
 
   ```sql
   DROP TABLE IF EXISTS TE_ODD_TBL;
@@ -493,6 +493,51 @@
   INSERT INTO TE_ODD_TBL VALUES('20240327-000248','DSZ_CZ_SXX', 5, 2, 8, 1, 0, 'DESKTOP-SPBEP1T', '2024-04-07 05:19:27.920', 'DESKTOP-SPBEP1T', '2024-04-07 05:19:27.920', 0);
   INSERT INTO TE_ODD_TBL VALUES('20240327-000248','DSZ_CZ_SXX', 6, 3, 9, 1, 1, 'DESKTOP-SPBEP1T', '2024-04-07 05:19:27.920', 'DESKTOP-SPBEP1T', '2024-04-07 05:19:27.920', 0);
   
+  ```
+
+### 4.6 TF_ODD_TBL
+
+- 异常信息数据表（它站推送数据）
+
+  ```sql
+  DROP TABLE IF EXISTS TF_ODD_TBL;
+  CREATE TABLE IF NOT EXISTS TF_ODD_TBL (
+  	TRN_YMD CHAR(15) NOT NULL,
+  	DEV_COD CHAR(10) NOT NULL,
+  	CAR_IDX SMALLINT NOT NULL,
+  	LAC_IDX SMALLINT NOT NULL,
+  	ODD_IDX SMALLINT NOT NULL,
+  	ODD_COD SMALLINT NOT NULL,
+  	RSV_FLG SMALLINT DEFAULT 0,
+  	NEW_MAN varchar(16) NOT NULL,
+  	NEW_YMD CHAR(23) NOT NULL,
+  	UPD_MAN varchar(16) NOT NULL,
+  	UPD_YMD CHAR(23) NOT NULL,
+  	DEL_FLG SMALLINT DEFAULT 0,
+  	PRIMARY KEY ( TRN_YMD, DEV_COD, CAR_IDX, LAC_IDX, ODD_IDX )
+  );
+  ```
+  
+- 字段说明：
+  
+  |  #   | 字段名称 | 说明                                | 主键 | 字段类型                   | 备注                          |
+  | :--: | -------- | ----------------------------------- | ---- | -------------------------- | ----------------------------- |
+  |  1   | TRN_YMD  | 列车通过开始时刻（YYYYMMDD-HHmmSS） | ✅    | 固定长度字符串：15字节     |                               |
+  |  2   | DEV_COD  | 设备编码                            | ✅    | 固定长度字符串：10字节     | 参照：MA_DEV_MST              |
+  |  3   | CAR_IDX  | 车辆编号                            | ✅    | 短数字                     |                               |
+  |  4   | LAC_IDX  | 线阵相机编号                        | ✅    | 短数字                     |                               |
+  |  5   | ODD_IDX  | 异常序号                            | ✅    | 短数字                     |                               |
+  |  6   | RSV_FLG  | 解决标志                            |      | 数字                       | 0：未处理 1：误报 2：处理结束 |
+  |  7   | NEW_MAN  | 创建记录者（设备）                  |      | 可变长度字符串：最大16字节 |                               |
+  |  8   | NEW_YMD  | 创建时刻                            |      | 固定长度字符串：23字节     |                               |
+  |  9   | UPD_MAN  | 修改记录者（设备）                  |      | 可变长度字符串：最大16字节 |                               |
+  |  10  | UPD_YMD  | 修改时刻                            |      | 固定长度字符串：23字节     |                               |
+  |  11  | DEL_FLG  | 处理状态                            |      | 数字                       | 0：未处理 1：处理结束         |
+  
+- 查询用SQL
+
+  ```sql
+  SELECT * FROM TF_ODD_TBL ORDER BY TRN_YMD DESC, DEV_COD, CAR_IDX, LAC_IDX;
   ```
 
 ## 4. 开放对外服务
