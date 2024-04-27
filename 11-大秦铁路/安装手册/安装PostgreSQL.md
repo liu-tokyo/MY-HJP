@@ -439,31 +439,32 @@
   
 - 字段说明：
   
-  |  #   | 字段名称 | 说明                                | 主键 | 字段类型                   | 备注                          |
-  | :--: | -------- | ----------------------------------- | ---- | -------------------------- | ----------------------------- |
-  |  1   | TRN_YMD  | 列车通过开始时刻（YYYYMMDD-HHmmSS） | ✅    | 固定长度字符串：15字节     |                               |
-  |  2   | DEV_COD  | 设备编码                            | ✅    | 固定长度字符串：10字节     | 参照：MA_DEV_MST              |
-  |  3   | CAR_IDX  | 车辆编号                            | ✅    | 短数字                     |                               |
-  |  4   | LAC_IDX  | 线阵相机编号                        | ✅    | 短数字                     |                               |
-  |  5   | ODD_IDX  | 异常序号                            | ✅    | 短数字                     |                               |
-  |  6   | ODD_COD  | 异常编号                            |      | 短数字                     | 参照：MB_ODD_MST              |
-  |  7   | ODD_NAM  | 异常名称                            |      | 可变长度字符串：最大50字节 |                               |
-  |  8   | C_SCORE  | 相似度                              |      | 可变长度字符串：最大10字节 |                               |
-  |  9   | POS_X_0  | 位置坐标-x0                         |      | 短数字                     |                               |
-  |  10  | POS_Y_0  | 位置坐标-y0                         |      | 短数字                     |                               |
-  |  11  | POS_X_1  | 位置坐标-x1                         |      | 短数字                     |                               |
-  |  12  | POS_Y_1  | 位置坐标-y2                         |      | 短数字                     |                               |
-  |  13  | ROW_IDX  | 行编号                              |      | 短数字                     | 暂无用途                      |
-  |  14  | COL_IDX  | 列标号                              |      | 短数字                     | 暂无用途                      |
-  |  15  | MSK_WID  | 隐蔽宽度                            |      | 短数字                     | 暂无用途                      |
-  |  16  | MSK_HEI  | 隐蔽高度                            |      | 短数字                     | 暂无用途                      |
-  |  17  | ODD_FLG  | 报告标志                            |      | 数字                       | 0：人工标定 1：AI智能识别     |
-  |  18  | RSV_FLG  | 解决标志                            |      | 数字                       | 0：未处理 1：误报 2：处理结束 |
-  |  19  | NEW_MAN  | 创建记录者（设备）                  |      | 可变长度字符串：最大16字节 |                               |
-  |  20  | NEW_YMD  | 创建时刻                            |      | 固定长度字符串：23字节     |                               |
-  |  21  | UPD_MAN  | 修改记录者（设备）                  |      | 可变长度字符串：最大16字节 |                               |
-  |  22  | UPD_YMD  | 修改时刻                            |      | 固定长度字符串：23字节     |                               |
-  |  23  | DEL_FLG  | 处理状态                            |      | 数字                       | 0：未处理 1：处理结束         |
+  |     #     | 字段名称 | 说明                                | 主键 | 字段类型                   | 备注                                   |
+  | :-------: | -------- | ----------------------------------- | ---- | -------------------------- | -------------------------------------- |
+  |     1     | TRN_YMD  | 列车通过开始时刻（YYYYMMDD-HHmmSS） | ✅    | 固定长度字符串：15字节     |                                        |
+  |     2     | DEV_COD  | 设备编码                            | ✅    | 固定长度字符串：10字节     | 参照：MA_DEV_MST                       |
+  |     3     | CAR_IDX  | 车辆编号                            | ✅    | 短数字                     |                                        |
+  |     4     | LAC_IDX  | 线阵相机编号                        | ✅    | 短数字                     |                                        |
+  |     5     | ODD_IDX  | 异常序号                            | ✅    | 短数字                     |                                        |
+  |     6     | ODD_COD  | 异常编号                            |      | 短数字                     | 参照：MB_ODD_MST                       |
+  |     7     | ODD_NAM  | 异常名称                            |      | 可变长度字符串：最大50字节 |                                        |
+  |     8     | C_SCORE  | 相似度                              |      | 可变长度字符串：最大10字节 |                                        |
+  |     9     | POS_X_0  | 位置坐标-x0                         |      | 短数字                     |                                        |
+  |    10     | POS_Y_0  | 位置坐标-y0                         |      | 短数字                     |                                        |
+  |    11     | POS_X_1  | 位置坐标-x1                         |      | 短数字                     |                                        |
+  |    12     | POS_Y_1  | 位置坐标-y2                         |      | 短数字                     |                                        |
+  |    13     | ROW_IDX  | 行编号                              |      | 短数字                     | 暂无用途                               |
+  |    14     | COL_IDX  | 列标号                              |      | 短数字                     | 暂无用途                               |
+  |    15     | MSK_WID  | 隐蔽宽度                            |      | 短数字                     | 暂无用途                               |
+  |    16     | MSK_HEI  | 隐蔽高度                            |      | 短数字                     | 暂无用途                               |
+  |    17     | ODD_FLG  | 报告标志                            |      | 数字                       | 0：人工标定 1：AI智能识别              |
+  |    18     | RSV_FLG  | 解决标志                            |      | 数字                       | 0：未处理 1：误报 2：处理结束          |
+  | 19<br />* | RSV_STA  | 解决问题的车站编码                  |      | 固定长度字符串：3字节      | 新增：2024.04.27<br />参照：MA_STA_MST |
+  |    20     | NEW_MAN  | 创建记录者（设备）                  |      | 可变长度字符串：最大16字节 |                                        |
+  |    21     | NEW_YMD  | 创建时刻                            |      | 固定长度字符串：23字节     |                                        |
+  |    22     | UPD_MAN  | 修改记录者（设备）                  |      | 可变长度字符串：最大16字节 |                                        |
+  |    23     | UPD_YMD  | 修改时刻                            |      | 固定长度字符串：23字节     |                                        |
+  |    24     | DEL_FLG  | 处理状态                            |      | 数字                       | 0：未处理 1：处理结束                  |
   
 - 查询用SQL
 
@@ -494,6 +495,20 @@
   INSERT INTO TE_ODD_TBL VALUES('20240327-000248','DSZ_CZ_SXX', 6, 3, 9, 1, 1, 'DESKTOP-SPBEP1T', '2024-04-07 05:19:27.920', 'DESKTOP-SPBEP1T', '2024-04-07 05:19:27.920', 0);
   
   ```
+  
+- **新增字段**
+
+  理论上，作为解决方案，`停车处理`是不太可能的，等发现问题，列车早就通过该车站了，一般都应该是 `下一站处理` 的情形。
+
+  ```sql
+  ## 增加【解决问题的车站编码】字段
+  ALTER TABLE TE_ODD_TBL ADD COLUMN RSV_STA CHAR(3);
+  ##  增加字段之后，把该字段的数值一律更新为本站的车站编码
+  UPDATE TE_ODD_TBL SET RSV_STA=LEFT(DEV_COD,3);
+  
+  ```
+
+  
 
 ### 4.6 TF_ODD_TBL
 
@@ -538,6 +553,112 @@
 
   ```sql
   SELECT * FROM TF_ODD_TBL ORDER BY TRN_YMD DESC, DEV_COD, CAR_IDX, LAC_IDX;
+  ```
+
+### 4.7 TG_CNT_TBL
+
+- 异常信息数据表（它站推送数据）
+
+  ```sql
+  DROP TABLE IF EXISTS TG_CNT_TBL;
+  CREATE TABLE IF NOT EXISTS TG_CNT_TBL (
+  	CNT_DAY CHAR(8) NOT NULL,
+  	STA_COD CHAR(3) NOT NULL,
+  	TRN_CNT SMALLINT NOT NULL,
+  	CAR_CNT INTEGER NOT NULL,
+  	ENG_CNT SMALLINT NOT NULL,
+  	ODD_CNT INTEGER NOT NULL,
+  	ODD_LVL_01 INTEGER DEFAULT 0,
+  	ODD_LVL_02 INTEGER DEFAULT 0,
+  	ODD_LVL_03 INTEGER DEFAULT 0,
+  	ODD_LVL_04 INTEGER DEFAULT 0,
+  	ODD_LVL_05 INTEGER DEFAULT 0,
+  	ODD_COD_01 INTEGER DEFAULT 0,
+  	ODD_COD_02 INTEGER DEFAULT 0,
+  	ODD_COD_03 INTEGER DEFAULT 0,
+  	ODD_COD_04 INTEGER DEFAULT 0,
+  	ODD_COD_05 INTEGER DEFAULT 0,
+  	ODD_COD_06 INTEGER DEFAULT 0,
+  	ODD_COD_07 INTEGER DEFAULT 0,
+  	ODD_COD_08 INTEGER DEFAULT 0,
+  	ODD_COD_09 INTEGER DEFAULT 0,
+  	ODD_COD_10 INTEGER DEFAULT 0,
+  	ODD_COD_11 INTEGER DEFAULT 0,
+  	ODD_COD_12 INTEGER DEFAULT 0,
+  	ODD_COD_13 INTEGER DEFAULT 0,
+  	ODD_COD_14 INTEGER DEFAULT 0,
+  	ODD_COD_15 INTEGER DEFAULT 0,
+  	ODD_COD_16 INTEGER DEFAULT 0,
+  	ODD_COD_17 INTEGER DEFAULT 0,
+  	ODD_COD_18 INTEGER DEFAULT 0,
+  	ODD_COD_19 INTEGER DEFAULT 0,
+  	ODD_COD_20 INTEGER DEFAULT 0,
+  	RSV_CNT INTEGER DEFAULT 0,
+  	RSV_CNT_01 INTEGER DEFAULT 0,
+  	RSV_CNT_02 INTEGER DEFAULT 0,
+  	RSV_CNT_03 INTEGER DEFAULT 0,
+  	RSV_CNT_04 INTEGER DEFAULT 0,
+  	RSV_CNT_05 INTEGER DEFAULT 0,
+  	NEW_MAN varchar(16) NOT NULL,
+  	NEW_YMD CHAR(23) NOT NULL,
+  	UPD_MAN varchar(16) NOT NULL,
+  	UPD_YMD CHAR(23) NOT NULL,
+  	DEL_FLG SMALLINT DEFAULT 0,
+  	PRIMARY KEY ( CNT_DAY, STA_COD )
+  );
+  ```
+  
+- 字段说明：
+  
+  |  #   | 字段名称   | 说明                 | 主键 | 字段类型                   | 备注                  |
+  | :--: | ---------- | -------------------- | ---- | -------------------------- | --------------------- |
+  |  1   | CNT_DAY    | 统计日期（YYYYMMDD） | ✅    | 固定长度字符串：8字节      |                       |
+  |  2   | STA_COD    | 车站编码             | ✅    | 固定长度字符串：3字节      | 参照：MA_STA_MST      |
+  |  3   | TRN_CNT    | 车次合计             |      | 短数字                     |                       |
+  |  4   | CAR_CNT    | 车辆合计             |      | 数字                       |                       |
+  |  5   | ENG_CNT    | 机车合计             |      | 短数字                     |                       |
+  |  6   | ODD_CNT    | 报警合计             |      | 数字                       |                       |
+  |  7   | ODD_LVL_01 | 1级报警合计          |      | 数字                       |                       |
+  |  8   | ODD_LVL_02 | 2级报警合计          |      | 数字                       |                       |
+  |  9   | ODD_LVL_03 | 3级报警合计          |      | 数字                       | 预留                  |
+  |  10  | ODD_LVL_04 | 4级报警合计          |      | 数字                       | 预留                  |
+  |  11  | ODD_LVL_05 | 5级报警合计          |      | 数字                       | 预留                  |
+  |  12  | ODD_COD_01 | 问题编号01的合计     |      | 数字                       |                       |
+  |  13  | ODD_COD_02 | 问题编号02的合计     |      | 数字                       |                       |
+  |  14  | ODD_COD_03 | 问题编号03的合计     |      | 数字                       |                       |
+  |  15  | ODD_COD_04 | 问题编号04的合计     |      | 数字                       |                       |
+  |  16  | ODD_COD_05 | 问题编号05的合计     |      | 数字                       |                       |
+  |  17  | ODD_COD_06 | 问题编号06的合计     |      | 数字                       |                       |
+  |  18  | ODD_COD_07 | 问题编号07的合计     |      | 数字                       |                       |
+  |  19  | ODD_COD_08 | 问题编号08的合计     |      | 数字                       |                       |
+  |  20  | ODD_COD_09 | 问题编号09的合计     |      | 数字                       |                       |
+  |  21  | ODD_COD_10 | 问题编号10的合计     |      | 数字                       |                       |
+  |  22  | ODD_COD_11 | 问题编号11的合计     |      | 数字                       |                       |
+  |  23  | ODD_COD_12 | 问题编号12的合计     |      | 数字                       |                       |
+  |  24  | ODD_COD_13 | 问题编号13的合计     |      | 数字                       |                       |
+  |  25  | ODD_COD_14 | 问题编号14的合计     |      | 数字                       |                       |
+  |  26  | ODD_COD_15 | 问题编号15的合计     |      | 数字                       | 数字                  |
+  |  27  | ODD_COD_16 | 问题编号16的合计     |      | 数字                       | 数字                  |
+  |  28  | ODD_COD_17 | 问题编号17的合计     |      | 数字                       | 数字                  |
+  |  29  | ODD_COD_18 | 问题编号18的合计     |      | 数字                       | 数字                  |
+  |  30  | ODD_COD_19 | 问题编号19的合计     |      | 数字                       | 数字                  |
+  |  31  | ODD_COD_20 | 问题编号20的合计     |      | 数字                       | 数字                  |
+  |  32  | RSV_CNT    | 解决合计             |      | 数字                       |                       |
+  |  33  | RSV_CNT_01 | 解决方法01的合计     |      | 数字                       |                       |
+  |  34  | RSV_CNT_02 | 解决方法02的合计     |      | 数字                       |                       |
+  |  35  | RSV_CNT_03 | 解决方法03的合计     |      | 数字                       |                       |
+  |  36  | RSV_CNT_04 | 解决方法04的合计     |      | 数字                       | 预留                  |
+  |  37  | RSV_CNT_05 | 解决方法05的合计     |      | 数字                       | 预留                  |
+  |  38  | NEW_MAN    | 创建记录者（设备）   |      | 可变长度字符串：最大16字节 |                       |
+  |  39  | NEW_YMD    | 创建时刻             |      | 固定长度字符串：23字节     |                       |
+  |  40  | UPD_MAN    | 修改记录者（设备）   |      | 可变长度字符串：最大16字节 |                       |
+  |  41  | UPD_YMD    | 修改时刻             |      | 固定长度字符串：23字节     |                       |
+  |  42  | DEL_FLG    | 处理状态             |      | 数字                       | 0：未处理 1：处理结束 |
+  
+- 查询用SQL
+
+  ```sql
+  SELECT * FROM TG_CNT_TBL ORDER BY CNT_DAY DESC, STA_COD;
   ```
 
 ## 4. 开放对外服务
