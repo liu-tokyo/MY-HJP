@@ -557,7 +557,7 @@
 
 ### 4.7 TG_CNT_TBL
 
-- 异常信息数据表（它站推送数据）
+- 异常信息统计数据表（车务段）
 
   ```sql
   DROP TABLE IF EXISTS TG_CNT_TBL;
@@ -683,8 +683,13 @@
 
   本人虚拟机的实际情况（需要根据实际网络情况，进行设置）：
 
-  ```
+  ```ini
+  ## C类网络
   host all all 192.168.114.0/24 scram-sha-256
+  ## B类网络
+  host all all 192.168.0.0/16 scram-sha-256
+  ## A类网络（基本用不到）
+  host all all 192.0.0.0/8 scram-sha-256
   ```
 
 - 对外开放数据库端口
