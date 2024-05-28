@@ -94,7 +94,7 @@
 
 创建大秦铁路的接发车系统相关的数据表。
 
-### 3.4 MA_STA_MST
+### 3.1 MA_STA_MST
 
 本次系统部署的所用车站信息表。7 个车站、车务段一共 8 条记录。
 
@@ -160,7 +160,7 @@
   SELECT * FROM MA_STA_MST ORDER BY STA_IDX;
   ```
 
-### 3.3 MB_STK_MST
+### 3.2 MB_STK_MST
 
 股道信息表，每个车站有上行、下行等 2 个股道，所以一共应该是 14 条记录。
 
@@ -220,7 +220,7 @@
   SELECT * FROM MB_STK_MST ORDER BY STK_IDX;
   ```
 
-### 3.2 MC_ODD_MST
+### 3.3 MC_ODD_MST
 
 - 异常名称数据表
 
@@ -267,12 +267,105 @@
   SELECT * FROM MC_ODD_MST;
   ```
 
+### 3.4 MD_USR_TYP
+
+- 修改履历
+
+  | 日期       | 内容 | 说明 |
+  | ---------- | ---- | ---- |
+  | 2024.05.27 | 新增 |      |
+
+- 用户类型基础表
+
+  ```sql
+  DROP TABLE IF EXISTS MD_USR_TYP;
+  CREATE TABLE IF NOT EXISTS MD_USR_TYP (
+  	USR_TYP_COD SMALLINT NOT NULL,
+  	USR_TYP_NAM varchar(20) NOT NULL,
+  	PRIMARY KEY ( USR_TYP_COD )
+  );
+  
+  ```
+  
+- 字段说明：
+  
+  |  #   | 字段名称    | 说明         | 主键 | 字段类型           | 备注 |
+  | :--: | ----------- | ------------ | ---- | ------------------ | ---- |
+  |  1   | USR_TYP_COD | 用户类型编码 | ✅    | 短数字             |      |
+  |  2   | USR_TYP_NAM | 用户类型名称 |      | 可变字符串：20字节 |      |
+  
+- 更新用SQL：
+  
+  车务段的 `管理员` 作为系统管理员，可以创建各个车站的管理员。
+  
+  ```sql
+  DELETE FROM MD_USR_TYP;
+  INSERT INTO MD_USR_TYP VALUES(0, '系统管理员');
+  INSERT INTO MD_USR_TYP VALUES(1, '管理员');
+  INSERT INTO MD_USR_TYP VALUES(2, '普通用户');
+  
+  ```
+
+### 3.5 ME_DEP_MST
+
+> 直接解用 `MA_STA_MST` 的数据。
+
 ## 4. 创建信息表
 
 ### 4.1 TA_USR_TBL
 
-取消 `口令登录` 方式，使用电脑的设备代码作为作业作业过程中的标记，因为有值班表和监控系统，能够很容易找到真实的操作者。  
-取消之后，可以简化一部分操作。相应的数据表也不需要创建。
+> 用户信息数据表
+
+~~取消 `口令登录` 方式，使用电脑的设备代码作为作业作业过程中的标记，因为有值班表和监控系统，能够很容易找到真实的操作者。  
+取消之后，可以简化一部分操作。相应的数据表也不需要创建。~~
+
+- 修改履历
+
+  | 日期       | 内容 | 说明 |
+  | ---------- | ---- | ---- |
+  | 2024.05.27 | 新增 |      |
+
+- 用户类型基础表
+
+  ```sql
+  DROP TABLE IF EXISTS TA_USR_TBL;
+  CREATE TABLE IF NOT EXISTS TA_USR_TBL (
+  	USER_ID CHAR(10) NOT NULL,
+  	USER_NM varchar(20) NOT NULL,
+  	USR_PWD varchar(20),
+  	USR_TYP SMALLINT NOT NULL,
+  	STA_COD CHAR(3) NOT NULL,
+  	USR_MEM varchar(50),
+  	NEW_MAN varchar(16) NOT NULL,
+  	NEW_YMD CHAR(23) NOT NULL,
+  	UPD_MAN varchar(16) NOT NULL,
+  	UPD_YMD CHAR(23) NOT NULL,
+  	DEL_FLG SMALLINT DEFAULT 0,
+  	PRIMARY KEY ( USER_ID )
+  );
+  
+  ```
+  
+- 字段说明：
+  
+  |  #   | 字段名称 | 说明     | 主键 | 字段类型                   | 备注 |
+  | :--: | -------- | -------- | ---- | -------------------------- | ---- |
+  |  1   | USER_ID  | 用户ID   | ✅    | 固定长度字符串：10字节字母 |      |
+  |  2   | USER_NM  | 用户名称 |      | 可变字符串：20字节         |      |
+  |  3   | USR_PWD  | 登陆密码 |      | 可变字符串：20字节         |      |
+  
+- 更新用SQL：
+  
+  1. 所有数据库插入一条 `系统管理员` 的数据，该数据对客户不公开；
+  
+  2. 在 车务段 的数据库中建立一条 `管理员` 的数据，公开给车务段的管理人员（允许修改密码）。
+  
+  ```sql
+  DELETE FROM TA_USR_TBL;
+  INSERT INTO TA_USR_TBL VALUES('HJS_ADMIN', '默认管理员','HJSMANAGER',0,'HJS','USR_MEM','NEW_MAN','NEW_YMD','UPD_MAN','UPD_YMD',0);
+  INSERT INTO TA_USR_TBL VALUES('admin', '管理员','ADMIN',1,'CWD','车务段管理员','NEW_MAN','NEW_YMD','UPD_MAN','UPD_YMD',0);
+  
+  ```
 
 ### 4.2 TB_DEV_TBL
 
