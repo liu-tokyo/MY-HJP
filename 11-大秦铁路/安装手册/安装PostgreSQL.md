@@ -314,7 +314,8 @@
 
 ### 4.1 TA_USR_TBL
 
-> 用户信息数据表
+> 用户信息数据表  
+> 针对 `解决方案` 的查询，实现了 `UPD_MAN` 设置为 `USER_ID`，如果系统要查询更多的数据的更新来源的话，可能需要把各个车站的电脑的名称作为 `USER_ID` 保存到本数据信息表中。
 
 ~~取消 `口令登录` 方式，使用电脑的设备代码作为作业作业过程中的标记，因为有值班表和监控系统，能够很容易找到真实的操作者。  
 取消之后，可以简化一部分操作。相应的数据表也不需要创建。~~
@@ -370,10 +371,12 @@
   
   ```sql
   DELETE FROM TA_USR_TBL;
-  INSERT INTO TA_USR_TBL VALUES('HJS_ADMIN', '默认管理员','HJSMANAGER',0,'HJS','USR_MEM','NEW_MAN','NEW_YMD','UPD_MAN','UPD_YMD',0);
+  INSERT INTO TA_USR_TBL VALUES('HJS_ADMIN', '默认管理员','HJSMANAGER',0,'CWD','USR_MEM','NEW_MAN','NEW_YMD','UPD_MAN','UPD_YMD',0);
   INSERT INTO TA_USR_TBL VALUES('admin', '默认管理员','ADMIN',1,'CWD','车务段管理员','NEW_MAN','NEW_YMD','UPD_MAN','UPD_YMD',0);
   
   ```
+  
+  注：所属部门编号 `CWD` 需要根据实际的车站编码进行修改。
 
 ### 4.2 TB_DEV_TBL
 
