@@ -797,18 +797,20 @@
   CREATE TABLE IF NOT EXISTS TH_DEV_STS (
   	DEV_COD CHAR(2) NOT NULL,
   	DEV_NAM varchar(20) NOT NULL,
-  	DEV_STS SMALLINT NOT NULL,
+  	DEV_STS_S SMALLINT NOT NULL,
+  	DEV_STS_X SMALLINT NOT NULL,
   	PRIMARY KEY ( DEV_COD )
   );
   ```
   
 - 字段说明：
   
-  |  #   | 字段名称 | 说明     | 主键 | 字段类型               | 备注 |
-  | :--: | -------- | -------- | ---- | ---------------------- | ---- |
-  |  1   | DEV_COD  | 设备编号 | ✅    | 固定长度字符串：2字节  |      |
-  |  2   | DEV_NAM  | 设备名称 | ✅    | 可变长度字符串：20字节 |      |
-  |  3   | DEV_STS  | 设备状态 | ✅    | 短数字                 |      |
+  |  #   | 字段名称  | 说明          | 主键 | 字段类型               | 备注 |
+  | :--: | --------- | ------------- | ---- | ---------------------- | ---- |
+  |  1   | DEV_COD   | 设备编号      | ✅    | 固定长度字符串：2字节  |      |
+  |  2   | DEV_NAM   | 设备名称      |      | 可变长度字符串：20字节 |      |
+  |  3   | DEV_STS_S | 设备状态-上行 |      | 短数字                 |      |
+  |  4   | DEV_STS_X | 设备状态-下行 |      | 短数字                 |      |
   
 - 查询用SQL
 
@@ -820,15 +822,15 @@
 
   ```SQL
   DELETE FROM TH_DEV_STS;
-  INSERT INTO TH_DEV_STS VALUES('01',  '车位控制设备', 1);
-  INSERT INTO TH_DEV_STS VALUES('02',  '车号采集设备', 1);
-  INSERT INTO TH_DEV_STS VALUES('11',  '左上线阵相机', 1);
-  INSERT INTO TH_DEV_STS VALUES('12',  '右上线阵相机', 1);
-  INSERT INTO TH_DEV_STS VALUES('13',  '左下线阵相机', 1);
-  INSERT INTO TH_DEV_STS VALUES('14',  '右下线阵相机', 1);
-  INSERT INTO TH_DEV_STS VALUES('21',  '左侧面阵相机', 1);
-  INSERT INTO TH_DEV_STS VALUES('22',  '右侧面阵相机', 1);
-  INSERT INTO TH_DEV_STS VALUES('31',  '音频采集设备', 1);
+  INSERT INTO TH_DEV_STS VALUES('01',  '车位控制设备', 1, 1);
+  INSERT INTO TH_DEV_STS VALUES('02',  '车号采集设备', 1, 1);
+  INSERT INTO TH_DEV_STS VALUES('11',  '左上线阵相机', 1, 1);
+  INSERT INTO TH_DEV_STS VALUES('12',  '右上线阵相机', 1, 1);
+  INSERT INTO TH_DEV_STS VALUES('13',  '左下线阵相机', 1, 1);
+  INSERT INTO TH_DEV_STS VALUES('14',  '右下线阵相机', 1, 1);
+  INSERT INTO TH_DEV_STS VALUES('21',  '左侧面阵相机', 1, 1);
+  INSERT INTO TH_DEV_STS VALUES('22',  '右侧面阵相机', 1, 1);
+  INSERT INTO TH_DEV_STS VALUES('31',  '音频采集设备', 1, 1);
   
   ```
 
