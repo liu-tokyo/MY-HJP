@@ -98,6 +98,12 @@
 
 本次系统部署的所用车站信息表。7 个车站、车务段一共 8 条记录。
 
+- 修改履历
+
+  | 日期       | 内容              | 说明     |
+  | ---------- | ----------------- | -------- |
+  | 2024.06.03 | 增加 DEV_STS 字段 | 设备状态 |
+
 - 车站信息表
 
   ```sql
@@ -116,6 +122,7 @@
   	dbs_user varchar(20) NOT NULL,
   	dbs_password varchar(20) NOT NULL,
   	dbs_port INTEGER NOT NULL,
+  	DEV_STS SMALLINT DEFAULT 0,
   	PRIMARY KEY ( STA_COD )
   );
   
@@ -138,6 +145,7 @@
   |  11  | dbs_user     | 数据库登录用户名   |      | 可变字符串：20字节            |                                       |
   |  12  | dbs_password | 数据库登录口令     |      | 可变字符串：20字节            |                                       |
   |  13  | dbs_port     | 数据库开放端口     |      | 数字                          | 货检默认：`15432`                     |
+  |  14  | DEV_STS      | 设备状态           |      | 短数字                        | 0：不明  1：正常  2：错误             |
   
 - 更新SQL
 
@@ -158,6 +166,16 @@
   
   ```SQL
   SELECT * FROM MA_STA_MST ORDER BY STA_IDX;
+  ```
+
+- **新增字段**
+
+  ```sql
+  ## 增加【设备状态】字段
+  ALTER TABLE MA_STA_MST ADD COLUMN DEV_STS SMALLINT DEFAULT 0;
+  ##  增加字段之后，把该字段的数值一律更新1
+  UPDATE MA_STA_MST SET DEV_STS=1;
+  
   ```
 
 ### 3.2 MB_STK_MST
@@ -612,7 +630,6 @@
   
   ```
 
-  
 
 ### 4.6 TF_ODD_TBL
 
@@ -763,6 +780,56 @@
 
   ```sql
   SELECT * FROM TG_CNT_TBL ORDER BY CNT_DAY DESC, STA_COD;
+  ```
+
+### 4.8 TH_DEV_STT
+
+- 修改履历
+
+  | 日期       | 内容 | 说明 |
+  | ---------- | ---- | ---- |
+  | 2024.06.03 | 新增 |      |
+
+- 设备状态信息表
+
+  ```sql
+  DROP TABLE IF EXISTS TH_DEV_STT;
+  CREATE TABLE IF NOT EXISTS TH_DEV_STT (
+  	DEV_COD CHAR(2) NOT NULL,
+  	DEV_NAM varchar(20) NOT NULL,
+  	DEV_STS SMALLINT NOT NULL,
+  	PRIMARY KEY ( DEV_COD )
+  );
+  ```
+  
+- 字段说明：
+  
+  |  #   | 字段名称 | 说明     | 主键 | 字段类型               | 备注 |
+  | :--: | -------- | -------- | ---- | ---------------------- | ---- |
+  |  1   | DEV_COD  | 设备编号 | ✅    | 固定长度字符串：2字节  |      |
+  |  2   | DEV_NAM  | 设备名称 | ✅    | 可变长度字符串：20字节 |      |
+  |  3   | DEV_STS  | 设备状态 | ✅    | 短数字                 |      |
+  
+- 查询用SQL
+
+  ```sql
+  SELECT * FROM TH_DEV_STT ORDER BY DEV_COD;
+  ```
+  
+- 更新SQL
+
+  ```SQL
+  DELETE FROM TH_DEV_STT;
+  INSERT INTO TH_DEV_STT VALUES('01',  '车位控制设备', 1);
+  INSERT INTO TH_DEV_STT VALUES('02',  '车号采集设备', 1);
+  INSERT INTO TH_DEV_STT VALUES('11',  '左上线阵相机', 1);
+  INSERT INTO TH_DEV_STT VALUES('12',  '右上线阵相机', 1);
+  INSERT INTO TH_DEV_STT VALUES('13',  '左下线阵相机', 1);
+  INSERT INTO TH_DEV_STT VALUES('14',  '右下线阵相机', 1);
+  INSERT INTO TH_DEV_STT VALUES('21',  '左侧面阵相机', 1);
+  INSERT INTO TH_DEV_STT VALUES('22',  '右侧面阵相机', 1);
+  INSERT INTO TH_DEV_STT VALUES('31',  '音频采集设备', 1);
+  
   ```
 
 ## 4. 开放对外服务
