@@ -3,22 +3,22 @@
 # 海康SDK和 OPENCV 的安装与编译
 
 > 视觉项⽬⽤到海康威视的 ⼯业相机，选择MVS_SDK_V3_5_0_3_VC90_Runtime_STD作为配套⼯业相机⼆次开发的SDK Runtime组件包。配置C语⾔开发环
-> 境，选择Visual Studio 2022；配置视觉算法库，选择OpenCV3.4.12版本。
+> 境，选择Visual Studio 2022；配置视觉算法库，选择OpenCV3.4.12版本。  
 > 本⽂就SDK和OPENCV的安装与编译进⾏详解，后续会对SDK具体内容与OpenCV联合编程开发进⾏探讨。
 
 ## 1. 海康SDK安装
 
 “海康威视”是中国领先的监控产品供应商，致⼒于不断提升视频处理技术和视频分析技术，⾯向全球提供领先的监控产品、技术解决⽅案与专业优质服务，为客⼾
-持续创造最⼤价值。
-海康威视官⽹：https://www.hikvision.com/cn/
-海康威视SDK下载地址：https://www.hikrobotics.com/cn/machinevision/service/download?module=0
+持续创造最⼤价值。  
+海康威视官⽹：https://www.hikvision.com/cn/  
+海康威视SDK下载地址：https://www.hikrobotics.com/cn/machinevision/service/download?module=0  
 下载版本：机器视觉⼯业相机SDK V3.5.0版本Runtime组件包（Windows）
 
 ## 2. OpenCV安装
 
-这边不推荐利⽤Cmake进⾏编译安装，我们可以在OpenCV官⽹选择相应的版本进⾏下载。
-OpenCV官⽹：https://opencv.org/
-版本下载地址：https://opencv.org/releases/page/2/
+这边不推荐利⽤Cmake进⾏编译安装，我们可以在OpenCV官⽹选择相应的版本进⾏下载。  
+OpenCV官⽹：https://opencv.org/  
+版本下载地址：https://opencv.org/releases/page/2/  
 版本号：3.4.12
 
 ## 3. VS2022的OpenCV与SDK配置
