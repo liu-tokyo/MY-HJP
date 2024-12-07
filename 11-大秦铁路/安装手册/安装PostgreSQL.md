@@ -265,15 +265,19 @@
   
   ```sql
   DELETE FROM MC_ODD_MST;
-  INSERT INTO MC_ODD_MST VALUES(1, 2, '车门开启');
-  INSERT INTO MC_ODD_MST VALUES(2, 2, '车窗开启');
-  INSERT INTO MC_ODD_MST VALUES(3, 2, '悬挂异物');
-  INSERT INTO MC_ODD_MST VALUES(4, 2, '货物撒漏');
-  INSERT INTO MC_ODD_MST VALUES(5, 2, '声音异常');
-  INSERT INTO MC_ODD_MST VALUES(6, 2, '篷布飘起');
-  INSERT INTO MC_ODD_MST VALUES(7, 2, '尾部软管未吊起');
-  INSERT INTO MC_ODD_MST VALUES(8, 2, '搭扣异常');
-  INSERT INTO MC_ODD_MST VALUES(9, 2, '闲杂人员扒乘');
+  INSERT INTO MC_ODD_MST VALUES(1, 2, '货物撒漏');
+  INSERT INTO MC_ODD_MST VALUES(2, 2, '货物自燃');
+  INSERT INTO MC_ODD_MST VALUES(3, 2, '闲杂人员扒乘');
+  INSERT INTO MC_ODD_MST VALUES(4, 2, '尾部软管未吊起');
+  INSERT INTO MC_ODD_MST VALUES(5, 2, '软管未连接');
+  INSERT INTO MC_ODD_MST VALUES(6, 2, '悬挂异物');
+  INSERT INTO MC_ODD_MST VALUES(7, 2, '折角塞门关闭');
+  INSERT INTO MC_ODD_MST VALUES(8, 2, '紧固器未撤除');
+  INSERT INTO MC_ODD_MST VALUES(9, 2, '货车列尾主机丢失');
+  INSERT INTO MC_ODD_MST VALUES(10, 2, '闸链拉紧');
+  INSERT INTO MC_ODD_MST VALUES(11, 2, '冒火花火星/异音');
+  INSERT INTO MC_ODD_MST VALUES(12, 2, '篷布飘起');
+  INSERT INTO MC_ODD_MST VALUES(13, 2, '车门开启');
   
   ```
   
@@ -590,13 +594,13 @@
   
   ※1 解决标志（RSV_FLG）
   
-  | 标志编码 | 标志说明           | 备注                         |
-  | -------- | ------------------ | ---------------------------- |
-  | 0        | 初始状态（未处理） |                              |
-  | 1        | 误报               |                              |
-  | 2        | 停车处理           |                              |
-  | 3        | 推送下一站         |                              |
-  | 4        | 容错               | 新增，类似 `误报` 一样的处理 |
+  | 解决标志编码 | 解决标志说明       | 备注                         |
+  | ------------ | ------------------ | ---------------------------- |
+  | 0            | 初始状态（未处理） |                              |
+  | 1            | 误报               |                              |
+  | 2            | 停车处理           |                              |
+  | 3            | 推送下一站         |                              |
+  | 4            | 容错               | 新增，类似 `误报` 一样的处理 |
   
 - 查询用SQL
 
