@@ -902,3 +902,17 @@
   客户端无法连接到数据库，导致客户端安装文件读写方式连接 FTP数据服务。
 - 解决办法  
   参照 `4. 开放对外服务`，开放针对客户端IP的访问许可。
+
+## 2. 防止版本被无意识更新
+
+- Windows Update 理论上不会导致数据库版本被更新。
+
+- 第三方工具容易导致 PostgreSQL 被更新。  
+  **Winget:** `winget pin add --name "PostgreSQL"` (这将禁止它被批量更新)。  
+  **Chocolatey:** `clist --pin name=postgresql`。
+
+- 改用 Docker 部署  
+  如果您希望数据库的版本**永远锁死**且不受 Windows 环境任何干扰，**使用 Docker 是终极方案**：  
+  ①您可以拉取一个特定版本的镜像（例如 postgres:14.2）。
+
+  ②无论 Windows 怎么更新、重启，只要 Docker 容器跑起来，里面的环境是 100% 隔离且版本恒定的。
